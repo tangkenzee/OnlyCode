@@ -3,9 +3,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Users, Trophy, Code } from "lucide-react";
+import { Clock, Users, Trophy, Code, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ApiStatus } from "@/components/ApiStatus";
+import CollaborativeSolve from "@/components/CollaborativeSolve";
+import type { Problem } from "@/lib/types";
 
 const SAMPLE_PROBLEMS = [
   {
@@ -37,6 +39,17 @@ const SAMPLE_PROBLEMS = [
 const Index = () => {
   const navigate = useNavigate();
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
+  const [isCollaborativeOpen, setIsCollaborativeOpen] = useState(false);
+  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
+
+  // Mock current user data
+  const currentUser = {
+    id: "current-user",
+    name: "You",
+    avatar: "U",
+    rating: 4.5,
+    xp: 1200
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -166,18 +179,74 @@ const Index = () => {
                       </div>
                     </div>
                   </div>
-                  <Button 
-                    onClick={() => navigate(`/problem/${problem.id}`)}
-                    className="ml-4"
-                  >
-                    Solve
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => navigate(`/problem/${problem.id}`)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Solve
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        setSelectedProblem({
+                          id: problem.id.toString(),
+                          title: problem.title,
+                          difficulty: problem.difficulty as 'Easy' | 'Medium' | 'Hard',
+                          description: problem.description,
+                          tags: problem.tags,
+                          createdAt: new Date().toISOString(),
+                          updatedAt: new Date().toISOString()
+                        });
+                        setIsCollaborativeOpen(true);
+                      }}
+                      size="sm"
+                    >
+                      <Users className="h-4 w-4 mr-1" />
+                      Collaborate
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
+
+      {/* Floating Collaborative Button */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <Button
+          size="lg"
+          className="rounded-full w-14 h-14 shadow-lg"
+          onClick={() => {
+            setSelectedProblem({
+              id: "1",
+              title: "Two Sum",
+              difficulty: "Easy",
+              description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+              tags: ["Array", "Hash Table"],
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            });
+            setIsCollaborativeOpen(true);
+          }}
+        >
+          <Users className="h-6 w-6" />
+        </Button>
+      </div>
+
+      {/* Collaborative Solve Modal */}
+      {selectedProblem && (
+        <CollaborativeSolve
+          isOpen={isCollaborativeOpen}
+          onClose={() => {
+            setIsCollaborativeOpen(false);
+            setSelectedProblem(null);
+          }}
+          problem={selectedProblem}
+          currentUser={currentUser}
+        />
+      )}
     </div>
   );
 };

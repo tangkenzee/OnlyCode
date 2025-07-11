@@ -6,51 +6,47 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Play, RotateCcw, HelpCircle, Clock, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Play, RotateCcw, HelpCircle, Clock, AlertTriangle, Users } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import CollaborativeSolve from "@/components/CollaborativeSolve";
+import type { Problem } from "@/lib/types";
 
-const SAMPLE_PROBLEM = {
-  id: 1,
+const SAMPLE_PROBLEM: Problem = {
+  id: "1",
   title: "Two Sum",
   difficulty: "Easy",
-  tags: ["Array", "Hash Table"],
   description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 
 You may assume that each input would have exactly one solution, and you may not use the same element twice.
 
 You can return the answer in any order.`,
-  examples: [
-    {
-      input: "nums = [2,7,11,15], target = 9",
-      output: "[0,1]",
-      explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
-    },
-    {
-      input: "nums = [3,2,4], target = 6",
-      output: "[1,2]",
-      explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]."
-    }
-  ],
-  starterCode: `function twoSum(nums, target) {
-    // Your code here
-    
-}`,
-  testCases: [
-    { input: [[2,7,11,15], 9], expected: [0,1] },
-    { input: [[3,2,4], 6], expected: [1,2] },
-    { input: [[3,3], 6], expected: [0,1] }
-  ]
+  tags: ["Array", "Hash Table"],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
 };
 
 const ProblemSolver = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [code, setCode] = useState(SAMPLE_PROBLEM.starterCode);
+  const [code, setCode] = useState(`function twoSum(nums, target) {
+    // Your code here
+    
+}`);
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [canRequestHelp, setCanRequestHelp] = useState(false);
+  const [isCollaborativeOpen, setIsCollaborativeOpen] = useState(false);
+
+  // Mock current user data
+  const currentUser = {
+    id: "current-user",
+    name: "You",
+    avatar: "U",
+    rating: 4.5,
+    xp: 1200
+  };
 
   // Timer logic
   useEffect(() => {
@@ -87,7 +83,13 @@ const ProblemSolver = () => {
     setTimeout(() => {
       try {
         // Simple test execution simulation
-        const testResult = SAMPLE_PROBLEM.testCases.map((test, index) => {
+        const testCases = [
+          { input: [[2,7,11,15], 9], expected: [0,1] },
+          { input: [[3,2,4], 6], expected: [1,2] },
+          { input: [[3,3], 6], expected: [0,1] }
+        ];
+        
+        const testResult = testCases.map((test, index) => {
           return `Test Case ${index + 1}: Input ${JSON.stringify(test.input)} -> Expected ${JSON.stringify(test.expected)}`;
         }).join('\n');
         
@@ -109,7 +111,10 @@ const ProblemSolver = () => {
   };
 
   const resetCode = () => {
-    setCode(SAMPLE_PROBLEM.starterCode);
+    setCode(`function twoSum(nums, target) {
+    // Your code here
+    
+}`);
     setOutput("");
     toast({
       title: "Code reset",
@@ -197,25 +202,31 @@ const ProblemSolver = () => {
               </CardContent>
             </Card>
 
-            {/* Help Request Card */}
-            {canRequestHelp && (
-              <Card className="border-yellow-200 bg-yellow-50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-yellow-800">
-                    <HelpCircle className="h-5 w-5" />
-                    Need Help?
-                  </CardTitle>
-                  <CardDescription className="text-yellow-700">
-                    You can now request help from a peer who has solved this problem.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+            {/* Help and Collaboration Cards */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Get Help & Collaborate</CardTitle>
+                <CardDescription>
+                  Work with peers or get help when you're stuck
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  onClick={() => setIsCollaborativeOpen(true)}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Collaborate with Peers
+                </Button>
+                {canRequestHelp && (
                   <Button onClick={requestHelp} className="w-full">
+                    <HelpCircle className="h-4 w-4 mr-2" />
                     Request Help from Peer
                   </Button>
-                </CardContent>
-              </Card>
-            )}
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Code Editor and Output */}
@@ -262,6 +273,14 @@ const ProblemSolver = () => {
           </div>
         </div>
       </div>
+
+      {/* Collaborative Solve Modal */}
+      <CollaborativeSolve
+        isOpen={isCollaborativeOpen}
+        onClose={() => setIsCollaborativeOpen(false)}
+        problem={SAMPLE_PROBLEM}
+        currentUser={currentUser}
+      />
     </div>
   );
 };
