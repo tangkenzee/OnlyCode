@@ -11,52 +11,23 @@ import { toast } from "@/hooks/use-toast";
 import CollaborativeSolve from "@/components/CollaborativeSolve";
 import type { Problem } from "@/lib/types";
 
-// Mock problems list (should match Index.tsx)
-const PROBLEMS: Problem[] = [
-  {
-    id: "1",
-    title: "Two Sum",
-    difficulty: "Easy",
-    description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-    tags: ["Array", "Hash Table"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "2",
-    title: "Longest Palindromic Substring",
-    difficulty: "Medium",
-    description: "Given a string s, return the longest palindromic substring in s.",
-    tags: ["String", "Dynamic Programming"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: "3",
-    title: "Median of Two Sorted Arrays",
-    difficulty: "Hard",
-    description: "Given two sorted arrays nums1 and nums2, return the median of the two sorted arrays.",
-    tags: ["Array", "Binary Search"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
-];
+const SAMPLE_PROBLEM: Problem = {
+  id: "1",
+  title: "Two Sum",
+  difficulty: "Easy",
+  description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.`,
+  tags: ["Array", "Hash Table"],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
 
 const ProblemSolver = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const problem = PROBLEMS.find(p => p.id === id);
-
-  // If not found, show not found message
-  if (!problem) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold mb-4">Problem Not Found</h1>
-        <Button onClick={() => navigate("/")}>Back to Home</Button>
-      </div>
-    );
-  }
-
   const [code, setCode] = useState(`function twoSum(nums, target) {
     // Your code here
     
@@ -176,9 +147,9 @@ const ProblemSolver = () => {
                 Back to Problems
               </Button>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl font-semibold text-foreground">{problem.title}</h1>
-                <Badge className={getDifficultyColor(problem.difficulty)}>
-                  {problem.difficulty}
+                <h1 className="text-xl font-semibold text-foreground">{SAMPLE_PROBLEM.title}</h1>
+                <Badge className={getDifficultyColor(SAMPLE_PROBLEM.difficulty)}>
+                  {SAMPLE_PROBLEM.difficulty}
                 </Badge>
               </div>
             </div>
@@ -204,7 +175,7 @@ const ProblemSolver = () => {
               <CardHeader>
                 <CardTitle>Problem Description</CardTitle>
                 <div className="flex gap-2">
-                  {problem.tags.map((tag) => (
+                  {SAMPLE_PROBLEM.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
                     </Badge>
@@ -213,12 +184,12 @@ const ProblemSolver = () => {
               </CardHeader>
               <CardContent>
                 <div className="whitespace-pre-wrap text-sm text-foreground mb-4">
-                  {problem.description}
+                  {SAMPLE_PROBLEM.description}
                 </div>
                 
                 <div className="space-y-4">
                   <h4 className="font-semibold text-foreground">Examples:</h4>
-                  {problem.examples.map((example, index) => (
+                  {SAMPLE_PROBLEM.examples.map((example, index) => (
                     <div key={index} className="bg-muted p-3 rounded-md">
                       <div className="text-sm">
                         <div><strong>Input:</strong> {example.input}</div>
@@ -307,7 +278,7 @@ const ProblemSolver = () => {
       <CollaborativeSolve
         isOpen={isCollaborativeOpen}
         onClose={() => setIsCollaborativeOpen(false)}
-        problem={problem}
+        problem={SAMPLE_PROBLEM}
         currentUser={currentUser}
       />
     </div>
