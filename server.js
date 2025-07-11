@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -9,69 +10,19 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Sample data
-const users = {
-  user1: {
-    id: 'user1',
-    name: 'Alex Thompson',
-    avatar: 'AT',
-    email: 'alex@example.com',
-    joinDate: '2024-03-01',
-    currentXP: 2480,
-    nextLevelXP: 3000,
-    rank: 6,
-    totalHelped: 134,
-    rating: 4.6,
-    badges: [
-      { id: 'badge1', name: 'String Master', description: 'Helped 25+ people with string problems', earned: '2024-01-15' },
-      { id: 'badge2', name: 'Helpful', description: 'Maintained 4.5+ rating for 30 days', earned: '2024-02-20' }
-    ],
-    stats: {
-      problemsSolved: 89,
-      helpStreak: 12,
-      avgResponseTime: '2.3 min',
-      favoriteTopics: ['Strings', 'Arrays', 'Trees']
-    }
-  }
-};
+// Load data from db.json
+const dbPath = path.join(__dirname, 'db.json');
+let db = { users: {}, helpRequests: [], leaderboard: [] };
+try {
+  const dbRaw = fs.readFileSync(dbPath, 'utf-8');
+  db = JSON.parse(dbRaw);
+} catch (err) {
+  console.error('Failed to load db.json:', err);
+}
 
-const helpRequests = [
-  {
-    id: 'req1',
-    problemTitle: 'Two Sum',
-    difficulty: 'Easy',
-    requesterId: 'user3',
-    requesterName: 'Alex Johnson',
-    timeStuck: '8 minutes',
-    attempts: 4,
-    message: 'I\'m getting a time limit exceeded error. I think my nested loop approach isn\'t efficient enough.',
-    tags: ['Array', 'Hash Table'],
-    urgent: false,
-    status: 'open',
-    createdAt: new Date().toISOString(),
-    code: 'function twoSum(nums, target) {\n  // Your code here\n}'
-  },
-  {
-    id: 'req2',
-    problemTitle: 'Longest Palindromic Substring',
-    difficulty: 'Medium',
-    requesterId: 'user4',
-    requesterName: 'Emma Davis',
-    timeStuck: '15 minutes',
-    attempts: 6,
-    message: 'Having trouble with the dynamic programming approach. My solution works for small inputs but fails for larger ones.',
-    tags: ['String', 'Dynamic Programming'],
-    urgent: true,
-    status: 'open',
-    createdAt: new Date().toISOString()
-  }
-];
-
-const leaderboard = [
-  { rank: 1, userId: 'user1', name: 'Alex Thompson', avatar: 'AT', xp: 2480, totalHelped: 134, rating: 4.6 },
-  { rank: 2, userId: 'user2', name: 'Sarah Chen', avatar: 'SC', xp: 1890, totalHelped: 89, rating: 4.9 },
-  { rank: 3, userId: 'user5', name: 'Mike Wilson', avatar: 'MW', xp: 1650, totalHelped: 67, rating: 4.7 }
-];
+const users = db.users;
+const helpRequests = db.helpRequests;
+const leaderboard = db.leaderboard;
 
 // API Routes
 app.get('/api/health', (req, res) => {
