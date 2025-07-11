@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import CollaborativeSolve from "@/components/CollaborativeSolve";
 import type { Problem } from "@/lib/types";
 
-const SAMPLE_PROBLEM: Problem = {
+const SAMPLE_PROBLEM: Problem & { examples: Array<{ input: string; output: string; explanation: string }> } = {
   id: "1",
   title: "Two Sum",
   difficulty: "Easy",
@@ -21,6 +21,28 @@ You may assume that each input would have exactly one solution, and you may not 
 
 You can return the answer in any order.`,
   tags: ["Array", "Hash Table"],
+  examples: [
+    {
+      input: "nums = [2,7,11,15], target = 9",
+      output: "[0,1]",
+      explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
+    },
+    {
+      input: "nums = [3,2,4], target = 6",
+      output: "[1,2]",
+      explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]."
+    },
+    {
+      input: "nums = [3,3], target = 6",
+      output: "[0,1]",
+      explanation: "Because nums[0] + nums[1] == 6, we return [0, 1]."
+    }
+  ],
+  testCases: [
+    { input: [[2,7,11,15], 9], expected: [0,1] },
+    { input: [[3,2,4], 6], expected: [1,2] },
+    { input: [[3,3], 6], expected: [0,1] }
+  ],
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString()
 };
@@ -83,7 +105,7 @@ const ProblemSolver = () => {
     setTimeout(() => {
       try {
         // Simple test execution simulation
-        const testCases = [
+        const testCases = SAMPLE_PROBLEM.testCases || [
           { input: [[2,7,11,15], 9], expected: [0,1] },
           { input: [[3,2,4], 6], expected: [1,2] },
           { input: [[3,3], 6], expected: [0,1] }
