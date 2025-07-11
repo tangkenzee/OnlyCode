@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Clock, User, MessageCircle, Star, Trophy } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useHelpRequests, useAcceptHelpRequest, useCurrentUser } from "@/hooks/use-api";
-import type { HelpRequest } from "@/lib/api";
+import { useHelpRequests, useAcceptHelpRequest, useCurrentUser } from "@/hooks/use-simple-api";
+import type { HelpRequest } from "@/lib/api-simple";
 
 const SAMPLE_REQUESTS = [
   {

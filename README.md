@@ -63,40 +63,46 @@ npm run build
 ---
 
 ## Backend Integration
-This project integrates with a backend API for data persistence and real-time features.
+This project includes a simple Express.js backend for data persistence and API functionality.
 
 ### Backend Setup
 ```bash
 # Option 1: Use the start script
-./start-backend.sh
+./start-server.sh
 
 # Option 2: Manual setup
-cd backend
 npm install
-npm run dev
+npm run server:dev
 ```
 
 The backend provides:
-- RESTful API for help requests, user management, and problems
-- WebSocket support for real-time chat during help sessions
-- User authentication and profile management
-- Leaderboard and statistics tracking
+- RESTful API for help requests, user management, and leaderboard
+- Simple in-memory data storage
+- CORS enabled for frontend integration
+- Health check endpoint for monitoring
+
+### API Endpoints
+- `GET /api/health` - Server health status
+- `GET /api/user/me` - Get current user profile
+- `GET /api/help-requests` - List help requests (with filters)
+- `POST /api/help-requests/:id/accept` - Accept help request
+- `GET /api/leaderboard` - Get user rankings
 
 ### Troubleshooting
 
 **API Connection Issues:**
-1. Make sure the backend is running on `http://localhost:3001`
+1. Make sure the server is running on `http://localhost:3001`
 2. Check the API Status component on the homepage
-3. If backend is not available, the app will use mock data
-4. Check browser console for detailed error messages
+3. Check browser console for detailed error messages
+4. Run `npm run server:dev` to start the backend
 
 **Common Issues:**
-- **CORS errors**: Backend has CORS enabled, should work automatically
-- **Port conflicts**: Make sure ports 3001 and 3002 are available
+- **Port conflicts**: Make sure port 3001 is available
 - **Node.js version**: Requires Node.js v16 or higher
+- **Dependencies**: Run `npm install` if you get module errors
 
-### API Documentation
-See `backend/README.md` for complete API documentation and setup instructions.
+### Development
+The backend is a simple Express.js server in `server.js` that serves sample data. In production, you would replace this with a proper database and authentication system.
 
 ---
 

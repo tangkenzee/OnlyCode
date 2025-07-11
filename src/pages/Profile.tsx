@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Star, Trophy, Zap, Target, Clock, Award, TrendingUp, Calendar } from "lucide-react";
-import { useCurrentUser } from "@/hooks/use-api";
+import { useCurrentUser } from "@/hooks/use-simple-api";
 
 const PROFILE_DATA = {
   name: "Alex Thompson",
