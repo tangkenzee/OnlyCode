@@ -49,12 +49,11 @@ const HelpRequests = () => {
   const navigate = useNavigate();
   const [activeHelps, setActiveHelps] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("All");
-  
-  // API hooks
-  const { data: helpRequests, loading, error, refetch } = useHelpRequests({
-    status: 'open',
-    difficulty: filter === 'All' ? undefined : filter
-  });
+  const [fetchRequests, setFetchRequests] = useState(false);
+  const [helpRequests, setHelpRequests] = useState<HelpRequest[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const { data: currentUser } = useCurrentUser();
   const { acceptRequest, loading: acceptingRequest } = useAcceptHelpRequest();
 
@@ -82,6 +81,25 @@ const HelpRequests = () => {
       case "Medium": return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case "Hard": return "bg-red-100 text-red-800 border-red-200";
       default: return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const handleLoadRequests = async () => {
+    setLoading(true);
+    setError(null);
+    setFetchRequests(true);
+    try {
+      // Use the API client directly to fetch help requests
+      const { apiClient } = await import("@/lib/api-simple");
+      const data = await apiClient.getHelpRequests({
+        status: 'open',
+        difficulty: filter === 'All' ? undefined : filter
+      });
+      setHelpRequests(data);
+    } catch (err: any) {
+      setError(err?.message || 'Failed to load help requests');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -180,20 +198,29 @@ const HelpRequests = () => {
             </div>
           </div>
 
-          {loading ? (
+          {/* Only show the button if helpRequests is null or not loaded */}
+          {!fetchRequests && (
+            <div className="text-center py-8">
+              <Button onClick={handleLoadRequests}>
+                Load Open Requests
+              </Button>
+            </div>
+          )}
+
+          {fetchRequests && loading ? (
             <div className="text-center py-8">
               <div className="text-muted-foreground">Loading help requests...</div>
             </div>
-          ) : error ? (
+          ) : fetchRequests && error ? (
             <div className="text-center py-8">
               <div className="text-destructive">Error loading help requests: {error}</div>
-              <Button onClick={refetch} className="mt-2">Retry</Button>
+              <Button onClick={handleLoadRequests} className="mt-2">Retry</Button>
             </div>
-          ) : filteredRequests.length === 0 ? (
+          ) : fetchRequests && filteredRequests.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-muted-foreground">No help requests available</div>
             </div>
-          ) : (
+          ) : fetchRequests && filteredRequests.length > 0 ? (
             filteredRequests.map((request: HelpRequest) => (
               <Card key={request.id} className={`hover:shadow-md transition-shadow ${
                 request.urgent ? 'border-red-200 bg-red-50' : ''
@@ -258,7 +285,7 @@ const HelpRequests = () => {
               </CardContent>
             </Card>
           ))
-          )}
+          ) : null}
         </div>
 
         {/* Helper Tips */}
