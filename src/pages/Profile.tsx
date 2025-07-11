@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Star, Trophy, Zap, Target, Clock, Award, TrendingUp, Calendar } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-api";
 
 const PROFILE_DATA = {
   name: "Alex Thompson",
@@ -42,8 +43,10 @@ const PROFILE_DATA = {
 const Profile = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
-
-  const progressToNextLevel = ((PROFILE_DATA.currentXP - 2000) / (PROFILE_DATA.nextLevelXP - 2000)) * 100;
+  
+  const { data: user, loading, error } = useCurrentUser();
+  
+  const progressToNextLevel = user ? ((user.currentXP - 2000) / (user.nextLevelXP - 2000)) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,55 +69,71 @@ const Profile = () => {
           <Card className="mb-8">
             <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                <Avatar className="w-24 h-24">
-                  <AvatarFallback className="text-2xl font-bold">
-                    {PROFILE_DATA.avatar}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-3xl font-bold text-foreground mb-2">{PROFILE_DATA.name}</h2>
-                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-4 text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      Joined {PROFILE_DATA.joinDate}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Trophy className="h-4 w-4" />
-                      Rank #{PROFILE_DATA.rank}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      {PROFILE_DATA.rating} rating
-                    </div>
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="text-muted-foreground">Loading profile...</div>
                   </div>
-                  
-                  {/* XP Progress */}
-                  <div className="mb-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">Level Progress</span>
-                      <span className="text-sm text-muted-foreground">
-                        {PROFILE_DATA.currentXP} / {PROFILE_DATA.nextLevelXP} XP
-                      </span>
-                    </div>
-                    <Progress value={progressToNextLevel} className="h-2" />
+                ) : error ? (
+                  <div className="text-center py-8">
+                    <div className="text-destructive">Error loading profile: {error}</div>
                   </div>
+                ) : user ? (
+                  <>
+                    <Avatar className="w-24 h-24">
+                      <AvatarFallback className="text-2xl font-bold">
+                        {user.avatar}
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex-1 text-center md:text-left">
+                      <h2 className="text-3xl font-bold text-foreground mb-2">{user.name}</h2>
+                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-4 text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          Joined {user.joinDate}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Trophy className="h-4 w-4" />
+                          Rank #{user.rank}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          {user.rating} rating
+                        </div>
+                      </div>
+                      
+                      {/* XP Progress */}
+                      <div className="mb-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-medium">Level Progress</span>
+                          <span className="text-sm text-muted-foreground">
+                            {user.currentXP} / {user.nextLevelXP} XP
+                          </span>
+                        </div>
+                        <Progress value={progressToNextLevel} className="h-2" />
+                      </div>
 
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <div className="text-2xl font-bold text-foreground">{PROFILE_DATA.totalHelped}</div>
-                      <div className="text-sm text-muted-foreground">People Helped</div>
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <div className="text-2xl font-bold text-foreground">{user.totalHelped}</div>
+                          <div className="text-sm text-muted-foreground">People Helped</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-foreground">{user.currentXP}</div>
+                          <div className="text-sm text-muted-foreground">Total XP</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-foreground">{user.badges.length}</div>
+                          <div className="text-sm text-muted-foreground">Badges Earned</div>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-2xl font-bold text-foreground">{PROFILE_DATA.currentXP}</div>
-                      <div className="text-sm text-muted-foreground">Total XP</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-foreground">{PROFILE_DATA.badges.length}</div>
-                      <div className="text-sm text-muted-foreground">Badges Earned</div>
-                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-muted-foreground">No user data available</div>
                   </div>
-                </div>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Clock, Users, Trophy, Code } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ApiStatus } from "@/components/ApiStatus";
 
 const SAMPLE_PROBLEMS = [
   {
@@ -89,7 +90,7 @@ const Index = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Active Helpers</CardTitle>
@@ -117,6 +118,7 @@ const Index = () => {
               <p className="text-xs text-muted-foreground">Active right now</p>
             </CardContent>
           </Card>
+          <ApiStatus />
         </div>
 
         {/* Filter Tabs */}

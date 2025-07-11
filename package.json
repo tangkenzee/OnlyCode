@@ -9,7 +9,6 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
-    "test": "jest --config jest.config.ts",
     "preview": "vite preview"
   },
   "dependencies": {

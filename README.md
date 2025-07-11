@@ -28,18 +28,7 @@ npm run build
 
 ---
 
-## Testing
 
-### Run Unit Tests
-```bash
-npm test
-```
-
-### Testing Tools
-- [Jest](https://jestjs.io/)
-- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
-
----
 
 ## Code Quality
 
@@ -73,8 +62,41 @@ npm test
 
 ---
 
-## CI/CD
-- Automated linting and testing on pull requests via GitHub Actions (see `.github/workflows/ci.yml`)
+## Backend Integration
+This project integrates with a backend API for data persistence and real-time features.
+
+### Backend Setup
+```bash
+# Option 1: Use the start script
+./start-backend.sh
+
+# Option 2: Manual setup
+cd backend
+npm install
+npm run dev
+```
+
+The backend provides:
+- RESTful API for help requests, user management, and problems
+- WebSocket support for real-time chat during help sessions
+- User authentication and profile management
+- Leaderboard and statistics tracking
+
+### Troubleshooting
+
+**API Connection Issues:**
+1. Make sure the backend is running on `http://localhost:3001`
+2. Check the API Status component on the homepage
+3. If backend is not available, the app will use mock data
+4. Check browser console for detailed error messages
+
+**Common Issues:**
+- **CORS errors**: Backend has CORS enabled, should work automatically
+- **Port conflicts**: Make sure ports 3001 and 3002 are available
+- **Node.js version**: Requires Node.js v16 or higher
+
+### API Documentation
+See `backend/README.md` for complete API documentation and setup instructions.
 
 ---
 

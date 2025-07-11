@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Clock, User, MessageCircle, Star, Trophy } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useHelpRequests, useAcceptHelpRequest, useCurrentUser } from "@/hooks/use-api";
+import type { HelpRequest } from "@/lib/api";
 
 const SAMPLE_REQUESTS = [
   {
@@ -45,17 +47,33 @@ const SAMPLE_REQUESTS = [
 
 const HelpRequests = () => {
   const navigate = useNavigate();
-  const [activeHelps, setActiveHelps] = useState<number[]>([]);
+  const [activeHelps, setActiveHelps] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("All");
+  
+  // API hooks
+  const { data: helpRequests, loading, error, refetch } = useHelpRequests({
+    status: 'open',
+    difficulty: filter === 'All' ? undefined : filter
+  });
+  const { data: currentUser } = useCurrentUser();
+  const { acceptRequest, loading: acceptingRequest } = useAcceptHelpRequest();
 
-  const acceptHelpRequest = (requestId: number) => {
-    setActiveHelps(prev => [...prev, requestId]);
-    toast({
-      title: "Help request accepted!",
-      description: "You're now connected with the person who needs help."
-    });
-    // In a real app, this would navigate to the chat interface
-    navigate(`/help-session/${requestId}`);
+  const acceptHelpRequest = async (requestId: string) => {
+    try {
+      const session = await acceptRequest(requestId);
+      setActiveHelps(prev => [...prev, requestId]);
+      toast({
+        title: "Help request accepted!",
+        description: "You're now connected with the person who needs help."
+      });
+      navigate(`/help-session/${session.id}`);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to accept help request. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -67,9 +85,7 @@ const HelpRequests = () => {
     }
   };
 
-  const filteredRequests = filter === "All" 
-    ? SAMPLE_REQUESTS 
-    : SAMPLE_REQUESTS.filter(req => req.difficulty === filter);
+  const filteredRequests = helpRequests || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -86,7 +102,7 @@ const HelpRequests = () => {
             </div>
             <div className="flex items-center gap-4">
               <div className="text-sm text-muted-foreground">
-                Your XP: <span className="font-semibold text-foreground">1,245</span>
+                Your XP: <span className="font-semibold text-foreground">{currentUser?.currentXP || 0}</span>
               </div>
               <Button variant="outline" onClick={() => navigate('/profile')}>
                 <User className="h-4 w-4 mr-2" />
@@ -164,10 +180,24 @@ const HelpRequests = () => {
             </div>
           </div>
 
-          {filteredRequests.map((request) => (
-            <Card key={request.id} className={`hover:shadow-md transition-shadow ${
-              request.urgent ? 'border-red-200 bg-red-50' : ''
-            }`}>
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="text-muted-foreground">Loading help requests...</div>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8">
+              <div className="text-destructive">Error loading help requests: {error}</div>
+              <Button onClick={refetch} className="mt-2">Retry</Button>
+            </div>
+          ) : filteredRequests.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="text-muted-foreground">No help requests available</div>
+            </div>
+          ) : (
+            filteredRequests.map((request: HelpRequest) => (
+              <Card key={request.id} className={`hover:shadow-md transition-shadow ${
+                request.urgent ? 'border-red-200 bg-red-50' : ''
+              }`}>
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -215,10 +245,10 @@ const HelpRequests = () => {
                   <div className="ml-6 flex flex-col gap-2">
                     <Button 
                       onClick={() => acceptHelpRequest(request.id)}
-                      disabled={activeHelps.includes(request.id)}
+                      disabled={activeHelps.includes(request.id) || acceptingRequest}
                     >
                       <MessageCircle className="h-4 w-4 mr-2" />
-                      {activeHelps.includes(request.id) ? "Helping..." : "Help"}
+                      {activeHelps.includes(request.id) ? "Helping..." : acceptingRequest ? "Accepting..." : "Help"}
                     </Button>
                     <div className="text-xs text-center text-muted-foreground">
                       +{request.difficulty === 'Easy' ? '10' : request.difficulty === 'Medium' ? '20' : '30'} XP
@@ -227,7 +257,8 @@ const HelpRequests = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          ))
+          )}
         </div>
 
         {/* Helper Tips */}
