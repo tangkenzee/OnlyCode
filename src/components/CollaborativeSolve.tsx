@@ -88,14 +88,11 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser, starterCode
 
   const startCollaboration = () => {
     if (selectedCollaborators.length === 0) return;
-    // Generate a session ID (could be random or based on timestamp)
-    const sessionId = Date.now().toString();
-    const collaborators = availableCollaborators.filter(c => selectedCollaborators.includes(c.id));
-    // Navigate to the collaborative session page, passing problem, collaborators, and starterCode as state
-    navigate(`/collaborative-solve/${sessionId}`, {
+    // Navigate to the pair programming page for real-time collaboration
+    navigate(`/pair-programming`, {
       state: {
         problem,
-        collaborators,
+        collaborators: availableCollaborators.filter(c => selectedCollaborators.includes(c.id)),
         currentUser,
         starterCode
       }
