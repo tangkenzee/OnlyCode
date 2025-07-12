@@ -186,78 +186,82 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Collaborative Problem Solving
-          </DialogTitle>
-          <DialogDescription>
-            Work with peers who have similar skill levels to solve "{problem.title}" together
-          </DialogDescription>
-        </DialogHeader>
+        <div className="overflow-y-auto max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Collaborative Problem Solving
+            </DialogTitle>
+            <DialogDescription>
+              Work with peers who have similar skill levels to solve "{problem.title}" together
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[70vh]">
-          {/* Left Panel - Collaborator Selection */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Available Collaborators</CardTitle>
-                <CardDescription>
-                  Select 1-3 peers to collaborate with. Choose users with similar skill levels for the best experience.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {availableCollaborators.map((collaborator) => {
-                  const isSelected = selectedCollaborators.includes(collaborator.id);
-                  const skillMatch = getSkillMatch(collaborator);
-                  
-                  return (
-                    <Card 
-                      key={collaborator.id} 
-                      className={`cursor-pointer transition-all ${
-                        isSelected ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
-                      }`}
-                      onClick={() => toggleCollaborator(collaborator.id)}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-10 w-10">
-                              <AvatarFallback>{collaborator.avatar}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-semibold">{collaborator.name}</h4>
-                                <div className="flex items-center gap-1">
-                                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                  <span className="text-sm">{collaborator.rating}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[70vh]">
+            {/* Left Panel - Collaborator Selection */}
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Available Collaborators</CardTitle>
+                  <CardDescription>
+                    Select 1-3 peers to collaborate with. Choose users with similar skill levels for the best experience.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 max-h-72 overflow-y-auto">
+                  {availableCollaborators.map((collaborator) => {
+                    const isSelected = selectedCollaborators.includes(collaborator.id);
+                    const skillMatch = getSkillMatch(collaborator);
+                    
+                    return (
+                      <Card 
+                        key={collaborator.id} 
+                        className={`cursor-pointer transition-all ${
+                          isSelected ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
+                        }`}
+                        onClick={() => toggleCollaborator(collaborator.id)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-10 w-10">
+                                <AvatarFallback>{collaborator.avatar}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-semibold">{collaborator.name}</h4>
+                                  <div className="flex items-center gap-1">
+                                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                    <span className="text-sm">{collaborator.rating}</span>
+                                  </div>
+                                  <div className={`w-2 h-2 rounded-full ${collaborator.isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
                                 </div>
-                                <div className={`w-2 h-2 rounded-full ${collaborator.isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
-                              </div>
-                              <div className="text-sm text-muted-foreground">
-                                {collaborator.xp} XP • {skillMatch.toFixed(0)}% skill match
+                                <div className="text-sm text-muted-foreground">
+                                  {collaborator.xp} XP • {skillMatch.toFixed(0)}% skill match
+                                </div>
                               </div>
                             </div>
+                            {isSelected && (
+                              <CheckCircle className="h-5 w-5 text-primary" />
+                            )}
                           </div>
-                          {isSelected && (
-                            <CheckCircle className="h-5 w-5 text-primary" />
-                          )}
-                        </div>
-                        
-                        <div className="mt-3 flex gap-1">
-                          {problem.tags.map(tag => (
-                            <Badge key={tag} variant="secondary" className="text-xs">
-                              {tag} Level: {collaborator.tagSkillLevels?.[tag] ?? 0}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </CardContent>
-            </Card>
+                          
+                          <div className="mt-3 flex gap-1">
+                            {problem.tags.map(tag => (
+                              <Badge key={tag} variant="secondary" className="text-xs">
+                                {tag} Level: {collaborator.tagSkillLevels?.[tag] ?? 0}
+                              </Badge>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            </div>
 
+            {/* Right Panel - Chat */}
+            {/* Replace chat panel with session info section */}
             {selectedCollaborators.length > 0 && (
               <Card>
                 <CardHeader>
@@ -283,7 +287,6 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
                       </div>
                     </div>
                   </div>
-                  
                   <Button 
                     onClick={startCollaboration}
                     disabled={selectedCollaborators.length === 0 || sessionActive}
@@ -294,73 +297,6 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
                 </CardContent>
               </Card>
             )}
-          </div>
-
-          {/* Right Panel - Chat */}
-          <div className="space-y-4">
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="text-lg">Collaboration Chat</CardTitle>
-                <CardDescription>
-                  {sessionActive 
-                    ? "Communicate with your collaborators to solve the problem together"
-                    : "Select collaborators to start the session"
-                  }
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="h-[400px] flex flex-col">
-                {sessionActive ? (
-                  <>
-                    <ScrollArea className="flex-1 mb-4">
-                      <div className="space-y-3">
-                        {chatMessages.map((message) => (
-                          <div key={message.id} className="flex gap-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback className="text-xs">
-                                {message.sender === "system" ? "🤖" : message.sender.charAt(0)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-sm">
-                                  {message.sender === "system" ? "Session" : message.sender}
-                                </span>
-                                <span className="text-xs text-muted-foreground">
-                                  {message.timestamp.toLocaleTimeString()}
-                                </span>
-                              </div>
-                              <div className="bg-muted p-3 rounded-lg">
-                                {message.message}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                    
-                    <div className="flex gap-2">
-                      <Textarea
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type your message..."
-                        className="flex-1"
-                        onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                      />
-                      <Button onClick={sendMessage} disabled={!newMessage.trim()}>
-                        <Send className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                    <div className="text-center">
-                      <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>Select collaborators to start the session</p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
           </div>
         </div>
       </DialogContent>
