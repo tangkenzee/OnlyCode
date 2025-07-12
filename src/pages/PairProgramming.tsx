@@ -3,11 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Users, MessageCircle, Send, ArrowLeft, Play, RotateCcw } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Users, ArrowLeft, Play, RotateCcw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import Editor from "@monaco-editor/react";
 
@@ -16,32 +13,15 @@ interface User {
   name: string;
 }
 
-interface ChatMessage {
-  id: string;
-  senderId: string;
-  senderName: string;
-  message: string;
-  timestamp: string;
-  type: string;
-}
-
 const PairProgramming = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [newMessage, setNewMessage] = useState("");
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [currentUser, setCurrentUser] = useState<User>({ id: `user-${Date.now()}`, name: `User ${Math.floor(Math.random() * 1000)}` });
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll chat to bottom
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
 
   // Connect to WebSocket
   useEffect(() => {
@@ -58,7 +38,6 @@ const PairProgramming = () => {
 
     websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      
       switch (data.type) {
         case 'room-joined':
           setUsers(data.users);
@@ -84,9 +63,6 @@ const PairProgramming = () => {
             title: `${data.userName} updated the code`,
             description: "The code has been synchronized."
           });
-          break;
-        case 'chat-message':
-          setChatMessages(prev => [...prev, data]);
           break;
       }
     };
@@ -120,7 +96,6 @@ const PairProgramming = () => {
   const handleCodeChange = (value: string | undefined) => {
     const newCode = value || "";
     setCode(newCode);
-    
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
         type: 'code-change',
@@ -129,25 +104,11 @@ const PairProgramming = () => {
     }
   };
 
-  // Send chat message
-  const sendMessage = () => {
-    if (!newMessage.trim() || !ws || ws.readyState !== WebSocket.OPEN) return;
-
-    ws.send(JSON.stringify({
-      type: 'chat-message',
-      message: newMessage
-    }));
-
-    setNewMessage("");
-  };
-
   // Run code
   const runCode = async () => {
     if (!code.trim()) return;
-
     setIsRunning(true);
     setOutput("Running code...");
-
     try {
       const response = await fetch('http://localhost:3001/api/execute-code', {
         method: 'POST',
@@ -173,9 +134,7 @@ const PairProgramming = () => {
           ]
         })
       });
-
       const result = await response.json();
-      
       if (result.success) {
         setOutput(result.output);
         toast({
@@ -213,7 +172,6 @@ const PairProgramming = () => {
 console.log(twoSum([2, 7, 11, 15], 9)); // Should output [0, 1]
 console.log(twoSum([3, 2, 4], 6)); // Should output [1, 2]
 console.log(twoSum([3, 3], 6)); // Should output [0, 1]`;
-    
     setCode(initialCode);
     handleCodeChange(initialCode);
   };
@@ -355,56 +313,6 @@ You can return the answer in any order.
                   <pre className="text-sm text-foreground whitespace-pre-wrap">
                     {output || "Run your code to see output here..."}
                   </pre>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Chat Panel */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4" />
-                  Chat
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <ScrollArea className="h-48 w-full">
-                    <div className="space-y-2">
-                      {chatMessages.map((message) => (
-                        <div key={message.id} className="flex gap-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarFallback className="text-xs">
-                              {message.senderName.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">{message.senderName}</span>
-                              <span className="text-xs text-muted-foreground">
-                                {new Date(message.timestamp).toLocaleTimeString()}
-                              </span>
-                            </div>
-                            <p className="text-sm">{message.message}</p>
-                          </div>
-                        </div>
-                      ))}
-                      <div ref={chatEndRef} />
-                    </div>
-                  </ScrollArea>
-                  <Separator />
-                  <div className="flex gap-2">
-                    <Input
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                      placeholder="Type your message..."
-                      disabled={!isConnected}
-                    />
-                    <Button onClick={sendMessage} disabled={!isConnected || !newMessage.trim()}>
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
               </CardContent>
             </Card>
