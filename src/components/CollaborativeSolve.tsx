@@ -17,13 +17,7 @@ interface CollaborativeSolveProps {
   isOpen: boolean;
   onClose: () => void;
   problem: Problem;
-  currentUser?: {
-    id: string;
-    name: string;
-    avatar: string;
-    rating: number;
-    xp: number;
-  };
+  currentUser?: Collaborator;
 }
 
 interface ChatMessage {
@@ -70,14 +64,27 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser, starterCode
     if (isOpen && availableCollaborators.length === 0) {
       apiClient.getUsers()
         .then((users: Collaborator[]) => {
-          setAvailableCollaborators(users);
+          // Exclude the current user from the list of available collaborators
+          const filtered = currentUser ? users.filter(u => u.id !== currentUser.id) : users;
+          setAvailableCollaborators(filtered);
         })
         .catch((err) => {
           console.error('Failed to load collaborators:', err);
           setAvailableCollaborators([]);
         });
     }
-  }, [isOpen]);
+  }, [isOpen, currentUser]);
+
+  useEffect(() => {
+    if (isOpen && currentUser) {
+      console.log('Current user tagSkillLevels:', currentUser.tagSkillLevels);
+    }
+    if (isOpen && availableCollaborators.length > 0) {
+      availableCollaborators.forEach((collab) => {
+        console.log(`Collaborator ${collab.name} tagSkillLevels:`, collab.tagSkillLevels);
+      });
+    }
+  }, [isOpen, currentUser, availableCollaborators]);
 
   const startCollaboration = () => {
     if (selectedCollaborators.length === 0) return;
@@ -143,9 +150,30 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser, starterCode
   };
 
   const getSkillMatch = (collaborator: Collaborator) => {
-    if (!Array.isArray(collaborator.skills) || !Array.isArray(problem.tags)) return 0;
-    const commonSkills = problem.tags.filter(tag => collaborator.skills && collaborator.skills.includes(tag));
-    return (commonSkills.length / problem.tags.length) * 100;
+    if (!currentUser || !currentUser.tagSkillLevels || !collaborator.tagSkillLevels) return 0;
+    const allTags = Array.from(new Set([
+      ...Object.keys(currentUser.tagSkillLevels),
+      ...Object.keys(collaborator.tagSkillLevels)
+    ]));
+    let total = 0;
+    let count = 0;
+    for (const tag of allTags) {
+      const myLevel = Number(currentUser.tagSkillLevels[tag] ?? 0);
+      const theirLevel = Number(collaborator.tagSkillLevels[tag] ?? 0);
+      if (myLevel === 0 && theirLevel === 0) continue;
+      if (myLevel === 0 || theirLevel === 0) {
+        // If one user has no skill, treat as no match for this tag
+        total += 0;
+        count++;
+        continue;
+      }
+      const maxLevel = Math.max(myLevel, theirLevel, 1);
+      const closeness = 1 - Math.abs(myLevel - theirLevel) / maxLevel;
+      total += closeness;
+      count++;
+    }
+    if (count === 0) return 0;
+    return Math.round((total / count) * 100);
   };
 
   return (
