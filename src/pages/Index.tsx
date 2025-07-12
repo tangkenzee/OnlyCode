@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,40 +6,15 @@ import { Clock, Users, Trophy, Code, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ApiStatus } from "@/components/ApiStatus";
 import CollaborativeSolve from "@/components/CollaborativeSolve";
+import { apiClient } from "@/lib/api.ts";
 import type { Problem } from "@/lib/types";
-
-const SAMPLE_PROBLEMS = [
-  {
-    id: 1,
-    title: "Two Sum",
-    difficulty: "Easy",
-    tags: ["Array", "Hash Table"],
-    solved: 1234,
-    description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target."
-  },
-  {
-    id: 2,
-    title: "Longest Palindromic Substring",
-    difficulty: "Medium",
-    tags: ["String", "Dynamic Programming"],
-    solved: 856,
-    description: "Given a string s, return the longest palindromic substring in s."
-  },
-  {
-    id: 3,
-    title: "Median of Two Sorted Arrays",
-    difficulty: "Hard",
-    tags: ["Array", "Binary Search"],
-    solved: 342,
-    description: "Given two sorted arrays nums1 and nums2, return the median of the two sorted arrays."
-  }
-];
 
 const Index = () => {
   const navigate = useNavigate();
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [isCollaborativeOpen, setIsCollaborativeOpen] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
+  const [problems, setProblems] = useState<Problem[]>([]);
 
   // Mock current user data
   const currentUser = {
@@ -50,6 +25,12 @@ const Index = () => {
     xp: 1200
   };
 
+  useEffect(() => {
+    apiClient.getProblems().then((data) => {
+      setProblems(data);
+    });
+  }, []);
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Easy": return "bg-green-100 text-green-800 border-green-200";
@@ -59,9 +40,9 @@ const Index = () => {
     }
   };
 
-  const filteredProblems = selectedDifficulty === "All" 
-    ? SAMPLE_PROBLEMS 
-    : SAMPLE_PROBLEMS.filter(p => p.difficulty === selectedDifficulty);
+  const filteredProblems = selectedDifficulty === "All"
+    ? problems
+    : problems.filter(p => p.difficulty === selectedDifficulty);
 
   return (
     <div className="min-h-screen bg-background">
@@ -174,7 +155,7 @@ const Index = () => {
                       </div>
                       <div className="flex items-center gap-1 text-sm text-muted-foreground">
                         <Users className="h-4 w-4" />
-                        {problem.solved} solved
+                        {(problem.testCases?.length || 0)} solved
                       </div>
                     </div>
                   </div>

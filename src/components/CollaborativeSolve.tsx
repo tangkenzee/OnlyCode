@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Users, MessageCircle, Star, Clock, Target, Send, X, CheckCircle } from "lucide-react";
 import type { Problem } from "@/lib/types";
+import { apiClient } from "@/lib/api.ts";
 
 interface CollaborativeSolveProps {
   isOpen: boolean;
@@ -51,50 +52,20 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
   const [sessionActive, setSessionActive] = useState(false);
   const [sessionProgress, setSessionProgress] = useState(0);
   const [sharedCode, setSharedCode] = useState("");
+  const [availableCollaborators, setAvailableCollaborators] = useState<Collaborator[]>([]);
 
-  // Mock data for collaborators with similar scores
-  const availableCollaborators: Collaborator[] = [
-    {
-      id: "1",
-      name: "Alex Chen",
-      avatar: "AC",
-      rating: 4.8,
-      xp: 1250,
-      isOnline: true,
-      lastSeen: new Date(),
-      skills: ["Array", "Hash Table", "Dynamic Programming"]
-    },
-    {
-      id: "2", 
-      name: "Sarah Kim",
-      avatar: "SK",
-      rating: 4.6,
-      xp: 1180,
-      isOnline: true,
-      lastSeen: new Date(),
-      skills: ["String", "Two Pointers", "Stack"]
-    },
-    {
-      id: "3",
-      name: "Mike Johnson", 
-      avatar: "MJ",
-      rating: 4.7,
-      xp: 1320,
-      isOnline: false,
-      lastSeen: new Date(Date.now() - 300000), // 5 minutes ago
-      skills: ["Tree", "Graph", "BFS"]
-    },
-    {
-      id: "4",
-      name: "Emma Davis",
-      avatar: "ED", 
-      rating: 4.5,
-      xp: 1100,
-      isOnline: true,
-      lastSeen: new Date(),
-      skills: ["Array", "Binary Search", "Sorting"]
+  useEffect(() => {
+    if (isOpen) {
+      apiClient.getCurrentUser().then(() => {
+        apiClient.getProblems().then((problems) => {
+          // You may want to use problems for context, or remove this if not needed
+        });
+      });
+      apiClient.request('/users').then((users: Collaborator[]) => {
+        setAvailableCollaborators(users);
+      });
     }
-  ];
+  }, [isOpen]);
 
   const startCollaboration = () => {
     if (selectedCollaborators.length === 0) return;

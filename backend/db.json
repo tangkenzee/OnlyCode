@@ -11,14 +11,6 @@
       "rank": 6,
       "totalHelped": 134,
       "rating": 4.6,
-      "overallRating": 4.6,
-      "skillRatings": {
-        "arrays": 4.5,
-        "hashtable": 4.8,
-        "strings": 4.7,
-        "trees": 4.2,
-        "dynamic programming": 4.0
-      },
       "badges": [
         { "id": "badge1", "name": "String Master", "description": "Helped 25+ people with string problems", "earned": "2024-01-15" },
         { "id": "badge2", "name": "Helpful", "description": "Maintained 4.5+ rating for 30 days", "earned": "2024-02-20" }
@@ -218,35 +210,6 @@
         "Array": 11,
         "String": 6
       }
-    },
-    "user2": {
-      "id": "user2",
-      "name": "Sarah Chen",
-      "avatar": "SC",
-      "email": "sarah@example.com",
-      "joinDate": "2024-02-15",
-      "currentXP": 1890,
-      "nextLevelXP": 2000,
-      "rank": 12,
-      "totalHelped": 89,
-      "rating": 4.9,
-      "overallRating": 4.9,
-      "skillRatings": {
-        "arrays": 4.7,
-        "hashtable": 4.6,
-        "strings": 4.8,
-        "trees": 4.5,
-        "dynamic programming": 4.9
-      },
-      "badges": [
-        { "id": "badge3", "name": "Quick Responder", "description": "Average response time under 3 minutes", "earned": "2024-03-10" }
-      ],
-      "stats": {
-        "problemsSolved": 67,
-        "helpStreak": 8,
-        "avgResponseTime": "1.8 min",
-        "favoriteTopics": ["Dynamic Programming", "Graphs", "Trees"]
-      }
     }
   },
   "helpRequests": [
@@ -284,5 +247,47 @@
     { "rank": 1, "userId": "user1", "name": "Alex Thompson", "avatar": "AT", "xp": 2480, "totalHelped": 134, "rating": 4.6 },
     { "rank": 2, "userId": "user2", "name": "Sarah Chen", "avatar": "SC", "xp": 1890, "totalHelped": 89, "rating": 4.9 },
     { "rank": 3, "userId": "user5", "name": "Mike Wilson", "avatar": "MW", "xp": 1650, "totalHelped": 67, "rating": 4.7 }
+  ],
+  "problems": [
+    {
+      "id": "1",
+      "title": "Two Sum",
+      "difficulty": "Easy",
+      "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+      "tags": ["Array", "Hash Table"],
+      "testCases": [
+        { "input": "[2,7,11,15], 9", "output": "[0,1]" },
+        { "input": "[3,2,4], 6", "output": "[1,2]" },
+        { "input": "[3,3], 6", "output": "[0,1]" }
+      ],
+      "createdAt": "2024-07-11T00:00:00.000Z",
+      "updatedAt": "2024-07-11T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "title": "Reverse String",
+      "difficulty": "Easy",
+      "description": "Write a function that reverses a string.",
+      "tags": ["String"],
+      "testCases": [
+        { "input": "hello", "output": "olleh" },
+        { "input": "OnlyCode", "output": "edoCylnO" }
+      ],
+      "createdAt": "2024-07-11T00:00:00.000Z",
+      "updatedAt": "2024-07-11T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "title": "Find Maximum",
+      "difficulty": "Easy",
+      "description": "Given an array of numbers, return the maximum value.",
+      "tags": ["Array"],
+      "testCases": [
+        { "input": "[1,2,3,4,5]", "output": "5" },
+        { "input": "[-1,-2,-3]", "output": "-1" }
+      ],
+      "createdAt": "2024-07-11T00:00:00.000Z",
+      "updatedAt": "2024-07-11T00:00:00.000Z"
+    }
   ]
 }
