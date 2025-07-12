@@ -185,6 +185,11 @@ app.get('/api/user/:userId/stats', (req, res) => {
   res.json(user.stats);
 });
 
+// Users route
+app.get('/api/users', (req, res) => {
+  res.json(Object.values(users));
+});
+
 // Help requests routes
 app.get('/api/help-requests', (req, res) => {
   const {difficulty, status, tags} = req.query;

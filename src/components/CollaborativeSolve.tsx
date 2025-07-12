@@ -63,9 +63,19 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser, starterCode
           // You may want to use problems for context, or remove this if not needed
         });
       });
-      apiClient.getUsers().then((users: Collaborator[]) => {
-        setAvailableCollaborators(users);
-      });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && availableCollaborators.length === 0) {
+      apiClient.getUsers()
+        .then((users: Collaborator[]) => {
+          setAvailableCollaborators(users);
+        })
+        .catch((err) => {
+          console.error('Failed to load collaborators:', err);
+          setAvailableCollaborators([]);
+        });
     }
   }, [isOpen]);
 
@@ -133,7 +143,8 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser, starterCode
   };
 
   const getSkillMatch = (collaborator: Collaborator) => {
-    const commonSkills = problem.tags.filter(tag => collaborator.skills.includes(tag));
+    if (!Array.isArray(collaborator.skills) || !Array.isArray(problem.tags)) return 0;
+    const commonSkills = problem.tags.filter(tag => collaborator.skills && collaborator.skills.includes(tag));
     return (commonSkills.length / problem.tags.length) * 100;
   };
 
