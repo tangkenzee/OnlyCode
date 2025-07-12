@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -45,7 +46,7 @@ interface Collaborator {
   tagSkillLevels?: Record<string, number>;
 }
 
-const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: CollaborativeSolveProps) => {
+const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser, starterCode }: CollaborativeSolveProps & { starterCode?: string }) => {
   const [selectedCollaborators, setSelectedCollaborators] = useState<string[]>([]);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -53,6 +54,7 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
   const [sessionProgress, setSessionProgress] = useState(0);
   const [sharedCode, setSharedCode] = useState("");
   const [availableCollaborators, setAvailableCollaborators] = useState<Collaborator[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen) {
@@ -61,7 +63,7 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
           // You may want to use problems for context, or remove this if not needed
         });
       });
-      apiClient.request('/users').then((users: Collaborator[]) => {
+      apiClient.getUsers().then((users: Collaborator[]) => {
         setAvailableCollaborators(users);
       });
     }
@@ -69,37 +71,18 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
 
   const startCollaboration = () => {
     if (selectedCollaborators.length === 0) return;
-    
-    setSessionActive(true);
-    setSessionProgress(0);
-    
-    // Add initial session message
+    // Generate a session ID (could be random or based on timestamp)
+    const sessionId = Date.now().toString();
     const collaborators = availableCollaborators.filter(c => selectedCollaborators.includes(c.id));
-    const names = collaborators.map(c => c.name).join(", ");
-    
-    setChatMessages([
-      {
-        id: "1",
-        sender: "system",
-        message: `Collaborative session started! Working with ${names} on "${problem.title}". Let's solve this together!`,
-        timestamp: new Date(),
-        type: 'text'
+    // Navigate to the collaborative session page, passing problem, collaborators, and starterCode as state
+    navigate(`/collaborative-solve/${sessionId}`, {
+      state: {
+        problem,
+        collaborators,
+        currentUser,
+        starterCode
       }
-    ]);
-
-    // Simulate collaborators joining
-    setTimeout(() => {
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: "2",
-          sender: collaborators[0].name,
-          message: "Hi everyone! I've been working on this problem too. What approach are you thinking?",
-          timestamp: new Date(),
-          type: 'text'
-        }
-      ]);
-    }, 1000);
+    });
   };
 
   const sendMessage = () => {

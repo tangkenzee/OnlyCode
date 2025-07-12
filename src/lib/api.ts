@@ -97,6 +97,8 @@ export interface LeaderboardEntry {
   rating: number;
 }
 
+import type {Collaborator} from '@/lib/types';
+
 class ApiClient {
   private baseUrl: string;
 
@@ -351,6 +353,10 @@ class ApiClient {
     problemsSolved: number;
   }> {
     return this.request('/stats/global');
+  }
+
+  async getUsers(): Promise<Collaborator[]> {
+    return this.request<Collaborator[]>('/users');
   }
 }
 

@@ -358,6 +358,7 @@ console.log(twoSum([3, 3], 6)); // Should output [0, 1]`);
         onClose={() => setIsCollaborativeOpen(false)}
         problem={SAMPLE_PROBLEM}
         currentUser={currentUser}
+        starterCode={code}
       />
     </div>
   );
