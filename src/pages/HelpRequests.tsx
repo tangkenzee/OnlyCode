@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -102,6 +102,15 @@ const HelpRequests = () => {
       setLoading(false);
     }
   };
+
+
+  // Reload help requests when filter changes and requests have already been loaded
+  useEffect(() => {
+    if (fetchRequests) {
+      handleLoadRequests();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
 
   const filteredRequests = helpRequests || [];
 
