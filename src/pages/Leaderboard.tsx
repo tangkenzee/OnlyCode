@@ -595,7 +595,12 @@ const Leaderboard = () => {
                     {user.avatar}
                   </AvatarFallback>
                 </Avatar>
-                <CardTitle className="text-lg">{user.name}</CardTitle>
+                <CardTitle 
+                  className="text-lg cursor-pointer hover:text-primary transition-colors" 
+                  onClick={() => navigate(`/profiles/${user.id}`)}
+                >
+                  {user.name}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="text-2xl font-bold text-primary">{user.xp.toLocaleString()} XP</div>
@@ -643,7 +648,12 @@ const Leaderboard = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-semibold text-foreground">{user.name}</div>
+                      <div 
+                        className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors" 
+                        onClick={() => navigate(`/profiles/${user.id}`)}
+                      >
+                        {user.name}
+                      </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Zap className="h-3 w-3" />

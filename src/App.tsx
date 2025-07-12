@@ -10,6 +10,7 @@ import HelpRequest from "./pages/HelpRequest";
 import HelpRequests from "./pages/HelpRequests";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
+import Profiles from "./pages/Profiles";
 import NotFound from "./pages/NotFound";
 import CollaborativeSession from "./pages/CollaborativeSession";
 import PairProgramming from "./pages/PairProgramming";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/help-requests" element={<HelpRequests />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profiles/:userId" element={<Profiles />} />
           <Route path="/collaborative-solve/:sessionId" element={<CollaborativeSession />} />
           <Route path="/pair-programming" element={<PairProgramming />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
