@@ -43,65 +43,356 @@ const Leaderboard = () => {
         
         // In a real app, this would be an API call
         // For now, we'll create the data inline since we can't import JSON files directly
-        const mockData: LeaderboardData = {
-          leaderboard: [
-            {
-              id: 1,
-              name: "Sarah Chen",
-              avatar: "SC",
-              xp: 3420,
-              helpCount: 234,
-              rating: 4.9,
-              badges: ["Algorithm Master", "Quick Responder", "Patience Award"],
-              rank: 1,
-              change: 0
-            },
-            {
-              id: 2,
-              name: "David Kumar",
-              avatar: "DK",
-              xp: 3180,
-              helpCount: 198,
-              rating: 4.8,
-              badges: ["Tree Expert", "Problem Solver", "Mentor"],
-              rank: 2,
-              change: 1
-            },
-            {
-              id: 3,
-              name: "Emma Rodriguez",
-              avatar: "ER",
-              xp: 2950,
-              helpCount: 176,
-              rating: 4.9,
-              badges: ["Dynamic Programming Pro", "Kind Helper"],
-              rank: 3,
-              change: -1
-            },
-            {
-              id: 4,
-              name: "Michael Johnson",
-              avatar: "MJ",
-              xp: 2780,
-              helpCount: 165,
-              rating: 4.7,
-              badges: ["Graph Theory Guru", "Fast Helper"],
-              rank: 4,
-              change: 2
-            },
-            {
-              id: 5,
-              name: "Lisa Wang",
-              avatar: "LW",
-              xp: 2650,
-              helpCount: 142,
-              rating: 4.8,
-              badges: ["Array Specialist", "Clear Explainer"],
-              rank: 5,
-              change: 0
-            }
-          ]
-        };
+        let mockData: LeaderboardData;
+        
+        // Generate different data based on time frame
+        if (timeFrame === "This Week") {
+          mockData = {
+            leaderboard: [
+              {
+                id: 2,
+                name: "David Kumar",
+                avatar: "DK",
+                xp: 420,
+                helpCount: 28,
+                rating: 4.9,
+                badges: ["Tree Expert", "Problem Solver", "Weekly Champion"],
+                rank: 1,
+                change: 3
+              },
+              {
+                id: 6,
+                name: "Alex Thompson",
+                avatar: "AT",
+                xp: 390,
+                helpCount: 26,
+                rating: 4.7,
+                badges: ["String Master", "Quick Helper"],
+                rank: 2,
+                change: 5
+              },
+              {
+                id: 1,
+                name: "Sarah Chen",
+                avatar: "SC",
+                xp: 380,
+                helpCount: 25,
+                rating: 4.8,
+                badges: ["Algorithm Master", "Quick Responder"],
+                rank: 3,
+                change: -2
+              },
+              {
+                id: 8,
+                name: "Priya Patel",
+                avatar: "PP",
+                xp: 350,
+                helpCount: 23,
+                rating: 4.6,
+                badges: ["DP Dynamo", "Rising Star"],
+                rank: 4,
+                change: 4
+              },
+              {
+                id: 3,
+                name: "Emma Rodriguez",
+                avatar: "ER",
+                xp: 320,
+                helpCount: 21,
+                rating: 4.8,
+                badges: ["Dynamic Programming Pro", "Kind Helper"],
+                rank: 5,
+                change: -2
+              },
+              {
+                id: 7,
+                name: "Mike Wilson",
+                avatar: "MW",
+                xp: 310,
+                helpCount: 20,
+                rating: 4.5,
+                badges: ["Tree Tactician", "Graph Helper"],
+                rank: 6,
+                change: 1
+              },
+              {
+                id: 4,
+                name: "Michael Johnson",
+                avatar: "MJ",
+                xp: 290,
+                helpCount: 19,
+                rating: 4.4,
+                badges: ["Graph Theory Guru"],
+                rank: 7,
+                change: -3
+              },
+              {
+                id: 9,
+                name: "John Lee",
+                avatar: "JL",
+                xp: 280,
+                helpCount: 18,
+                rating: 4.3,
+                badges: ["Stack Savant", "Newcomer"],
+                rank: 8,
+                change: 2
+              },
+              {
+                id: 5,
+                name: "Lisa Wang",
+                avatar: "LW",
+                xp: 270,
+                helpCount: 17,
+                rating: 4.6,
+                badges: ["Array Specialist"],
+                rank: 9,
+                change: -4
+              },
+              {
+                id: 10,
+                name: "Linda Nguyen",
+                avatar: "LN",
+                xp: 250,
+                helpCount: 16,
+                rating: 4.7,
+                badges: ["Hash Table Hero", "Consistent Helper"],
+                rank: 10,
+                change: 0
+              }
+            ]
+          };
+        } else if (timeFrame === "This Month") {
+          mockData = {
+            leaderboard: [
+              {
+                id: 1,
+                name: "Sarah Chen",
+                avatar: "SC",
+                xp: 1850,
+                helpCount: 123,
+                rating: 4.9,
+                badges: ["Algorithm Master", "Quick Responder", "Monthly Champion"],
+                rank: 1,
+                change: 1
+              },
+              {
+                id: 3,
+                name: "Emma Rodriguez",
+                avatar: "ER",
+                xp: 1720,
+                helpCount: 114,
+                rating: 4.8,
+                badges: ["Dynamic Programming Pro", "Kind Helper", "Rising Star"],
+                rank: 2,
+                change: 2
+              },
+              {
+                id: 2,
+                name: "David Kumar",
+                avatar: "DK",
+                xp: 1680,
+                helpCount: 109,
+                rating: 4.7,
+                badges: ["Tree Expert", "Problem Solver"],
+                rank: 3,
+                change: -2
+              },
+              {
+                id: 6,
+                name: "Alex Thompson",
+                avatar: "AT",
+                xp: 1520,
+                helpCount: 98,
+                rating: 4.6,
+                badges: ["String Master", "Helpful", "Consistent"],
+                rank: 4,
+                change: 3
+              },
+              {
+                id: 4,
+                name: "Michael Johnson",
+                avatar: "MJ",
+                xp: 1450,
+                helpCount: 89,
+                rating: 4.5,
+                badges: ["Graph Theory Guru", "Fast Helper"],
+                rank: 5,
+                change: 0
+              },
+              {
+                id: 5,
+                name: "Lisa Wang",
+                avatar: "LW",
+                xp: 1380,
+                helpCount: 85,
+                rating: 4.7,
+                badges: ["Array Specialist", "Clear Explainer"],
+                rank: 6,
+                change: -1
+              },
+              {
+                id: 7,
+                name: "Mike Wilson",
+                avatar: "MW",
+                xp: 1290,
+                helpCount: 78,
+                rating: 4.4,
+                badges: ["Tree Tactician", "Steady Helper"],
+                rank: 7,
+                change: 1
+              },
+              {
+                id: 10,
+                name: "Linda Nguyen",
+                avatar: "LN",
+                xp: 1180,
+                helpCount: 71,
+                rating: 4.6,
+                badges: ["Hash Table Hero", "Team Player"],
+                rank: 8,
+                change: 2
+              },
+              {
+                id: 8,
+                name: "Priya Patel",
+                avatar: "PP",
+                xp: 1120,
+                helpCount: 67,
+                rating: 4.3,
+                badges: ["DP Dynamo", "Learner"],
+                rank: 9,
+                change: -2
+              },
+              {
+                id: 9,
+                name: "John Lee",
+                avatar: "JL",
+                xp: 1050,
+                helpCount: 62,
+                rating: 4.2,
+                badges: ["Stack Savant", "Dedicated"],
+                rank: 10,
+                change: 0
+              }
+            ]
+          };
+        } else {
+          // All Time data
+          mockData = {
+            leaderboard: [
+              {
+                id: 1,
+                name: "Sarah Chen",
+                avatar: "SC",
+                xp: 3420,
+                helpCount: 234,
+                rating: 4.9,
+                badges: ["Algorithm Master", "Quick Responder", "Patience Award"],
+                rank: 1,
+                change: 0
+              },
+              {
+                id: 2,
+                name: "David Kumar",
+                avatar: "DK",
+                xp: 3180,
+                helpCount: 198,
+                rating: 4.8,
+                badges: ["Tree Expert", "Problem Solver", "Mentor"],
+                rank: 2,
+                change: 1
+              },
+              {
+                id: 3,
+                name: "Emma Rodriguez",
+                avatar: "ER",
+                xp: 2950,
+                helpCount: 176,
+                rating: 4.9,
+                badges: ["Dynamic Programming Pro", "Kind Helper"],
+                rank: 3,
+                change: -1
+              },
+              {
+                id: 4,
+                name: "Michael Johnson",
+                avatar: "MJ",
+                xp: 2780,
+                helpCount: 165,
+                rating: 4.7,
+                badges: ["Graph Theory Guru", "Fast Helper"],
+                rank: 4,
+                change: 2
+              },
+              {
+                id: 5,
+                name: "Lisa Wang",
+                avatar: "LW",
+                xp: 2650,
+                helpCount: 142,
+                rating: 4.8,
+                badges: ["Array Specialist", "Clear Explainer"],
+                rank: 5,
+                change: 0
+              },
+              {
+                id: 6,
+                name: "Alex Thompson",
+                avatar: "AT",
+                xp: 2480,
+                helpCount: 134,
+                rating: 4.6,
+                badges: ["String Master", "Helpful"],
+                rank: 6,
+                change: -2
+              },
+              {
+                id: 7,
+                name: "Mike Wilson",
+                avatar: "MW",
+                xp: 2320,
+                helpCount: 121,
+                rating: 4.7,
+                badges: ["Tree Tactician", "Patient Teacher"],
+                rank: 7,
+                change: 1
+              },
+              {
+                id: 8,
+                name: "Priya Patel",
+                avatar: "PP",
+                xp: 2180,
+                helpCount: 108,
+                rating: 4.5,
+                badges: ["DP Dynamo", "Dedicated Helper"],
+                rank: 8,
+                change: -1
+              },
+              {
+                id: 9,
+                name: "John Lee",
+                avatar: "JL",
+                xp: 2050,
+                helpCount: 95,
+                rating: 4.4,
+                badges: ["Stack Savant", "Reliable"],
+                rank: 9,
+                change: 0
+              },
+              {
+                id: 10,
+                name: "Linda Nguyen",
+                avatar: "LN",
+                xp: 1920,
+                helpCount: 87,
+                rating: 4.6,
+                badges: ["Hash Table Hero", "Team Player"],
+                rank: 10,
+                change: 1
+              }
+            ]
+          };
+        }
         
         setLeaderboardData(mockData.leaderboard);
         
