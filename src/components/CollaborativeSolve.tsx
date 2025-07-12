@@ -258,43 +258,6 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
                   })}
                 </CardContent>
               </Card>
-
-              {selectedCollaborators.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Session Info</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span>Selected Collaborators:</span>
-                        <span className="font-semibold">{selectedCollaborators.length}/3</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Problem Difficulty:</span>
-                        <Badge variant="outline">{problem.difficulty}</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Session Progress:</span>
-                        <div className="w-24 bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full transition-all" 
-                            style={{ width: `${sessionProgress}%` }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      onClick={startCollaboration}
-                      disabled={selectedCollaborators.length === 0 || sessionActive}
-                      className="w-full mt-4"
-                    >
-                      {sessionActive ? "Session Active" : "Start Collaboration"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
             </div>
 
             {/* Right Panel - Chat */}
