@@ -154,6 +154,38 @@ class SimpleApiClient {
     }
   }
 
+  async createHelpRequest(data: {
+    problemTitle: string;
+    difficulty: string;
+    message: string;
+    tags: string[];
+    code?: string;
+    attempts: number;
+    timeStuck: string;
+  }): Promise<HelpRequest> {
+    const url = `${this.baseUrl}/help-requests`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'user-id': 'user1',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Create help request failed:', error);
+      throw error;
+    }
+  }
+
   // Leaderboard
   async getLeaderboard(limit: number = 50): Promise<LeaderboardEntry[]> {
     return this.request<LeaderboardEntry[]>(`/leaderboard?limit=${limit}`);
@@ -197,6 +229,18 @@ export const api = {
 
   async acceptHelpRequest(requestId: string): Promise<any> {
     return apiClient.acceptHelpRequest(requestId);
+  },
+
+  async createHelpRequest(data: {
+    problemTitle: string;
+    difficulty: string;
+    message: string;
+    tags: string[];
+    code?: string;
+    attempts: number;
+    timeStuck: string;
+  }): Promise<HelpRequest> {
+    return apiClient.createHelpRequest(data);
   },
 
   // Leaderboard
