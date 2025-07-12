@@ -186,7 +186,7 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-        <div className="overflow-y-auto max-h-[80vh]">
+        <div className="p-6 h-[80vh] w-full flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
@@ -197,10 +197,10 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[70vh]">
-            {/* Left Panel - Collaborator Selection */}
-            <div className="space-y-4">
-              <Card>
+          <div className="flex-1 flex flex-col lg:flex-row gap-6 w-full h-full">
+            <div className="flex-1 h-full">
+              {/* Available Collaborators Card */}
+              <Card className="h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="text-lg">Available Collaborators</CardTitle>
                   <CardDescription>
@@ -259,43 +259,43 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
                 </CardContent>
               </Card>
             </div>
-
-            {/* Right Panel - Chat */}
-            {/* Replace chat panel with session info section */}
             {selectedCollaborators.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Session Info</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span>Selected Collaborators:</span>
-                      <span className="font-semibold">{selectedCollaborators.length}/3</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Problem Difficulty:</span>
-                      <Badge variant="outline">{problem.difficulty}</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Session Progress:</span>
-                      <div className="w-24 bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-primary h-2 rounded-full transition-all" 
-                          style={{ width: `${sessionProgress}%` }}
-                        />
+              <div className="flex-1 h-full">
+                {/* Session Info Card */}
+                <Card className="h-full flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Session Info</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span>Selected Collaborators:</span>
+                        <span className="font-semibold">{selectedCollaborators.length}/3</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Problem Difficulty:</span>
+                        <Badge variant="outline">{problem.difficulty}</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Session Progress:</span>
+                        <div className="w-24 bg-muted rounded-full h-2">
+                          <div 
+                            className="bg-primary h-2 rounded-full transition-all" 
+                            style={{ width: `${sessionProgress}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <Button 
-                    onClick={startCollaboration}
-                    disabled={selectedCollaborators.length === 0 || sessionActive}
-                    className="w-full mt-4"
-                  >
-                    {sessionActive ? "Session Active" : "Start Collaboration"}
-                  </Button>
-                </CardContent>
-              </Card>
+                    <Button 
+                      onClick={startCollaboration}
+                      disabled={selectedCollaborators.length === 0 || sessionActive}
+                      className="w-full mt-4"
+                    >
+                      {sessionActive ? "Session Active" : "Start Collaboration"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </div>
         </div>
