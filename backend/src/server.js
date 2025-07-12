@@ -43,7 +43,7 @@ const sessions = new Map();  // sessionId -> Set of WebSocket connections
 // Global pair programming room state
 const globalPairProgrammingRoom = {
   id: 'global-pair-programming',
-  users: new Set(), // Set of user objects
+  users: new Set(),  // Set of user objects
   code: `function twoSum(nums, target) {
   // Your code here
   
@@ -57,7 +57,8 @@ console.log(twoSum([3, 3], 6)); // Should output [0, 1]`,
     id: 'two-sum',
     title: 'Two Sum',
     difficulty: 'Easy',
-    description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+    description:
+        `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 
 You may assume that each input would have exactly one solution, and you may not use the same element twice.
 
@@ -87,15 +88,16 @@ wss.on('connection', (ws, req) => {
     // Handle pair programming room
     const userId = url.searchParams.get('userId') || 'anonymous';
     const userName = url.searchParams.get('userName') || 'Anonymous';
-    
+
     // Add user to global room
-    const user = { id: userId, name: userName, ws };
+    const user = {id: userId, name: userName, ws};
     globalPairProgrammingRoom.users.add(user);
-    
+
     // Send current room state to new user
     ws.send(JSON.stringify({
       type: 'room-joined',
-      users: Array.from(globalPairProgrammingRoom.users).map(u => ({ id: u.id, name: u.name })),
+      users: Array.from(globalPairProgrammingRoom.users)
+                 .map(u => ({id: u.id, name: u.name})),
       code: globalPairProgrammingRoom.code,
       problem: globalPairProgrammingRoom.problem
     }));
@@ -103,21 +105,19 @@ wss.on('connection', (ws, req) => {
     // Notify other users about new participant
     globalPairProgrammingRoom.users.forEach(client => {
       if (client.ws !== ws && client.ws.readyState === 1) {
-        client.ws.send(JSON.stringify({
-          type: 'user-joined',
-          user: { id: userId, name: userName }
-        }));
+        client.ws.send(JSON.stringify(
+            {type: 'user-joined', user: {id: userId, name: userName}}));
       }
     });
 
     ws.on('message', (data) => {
       try {
         const message = JSON.parse(data);
-        
+
         if (message.type === 'code-change') {
           // Update global code
           globalPairProgrammingRoom.code = message.code;
-          
+
           // Broadcast code change to all users
           globalPairProgrammingRoom.users.forEach(client => {
             if (client.ws !== ws && client.ws.readyState === 1) {
@@ -143,10 +143,8 @@ wss.on('connection', (ws, req) => {
           // Broadcast chat message to all users
           globalPairProgrammingRoom.users.forEach(client => {
             if (client.ws.readyState === 1) {
-              client.ws.send(JSON.stringify({
-                type: 'chat-message',
-                ...chatMessage
-              }));
+              client.ws.send(
+                  JSON.stringify({type: 'chat-message', ...chatMessage}));
             }
           });
         }
@@ -166,11 +164,8 @@ wss.on('connection', (ws, req) => {
       // Notify other users about departure
       globalPairProgrammingRoom.users.forEach(client => {
         if (client.ws.readyState === 1) {
-          client.ws.send(JSON.stringify({
-            type: 'user-left',
-            userId: userId,
-            userName: userName
-          }));
+          client.ws.send(JSON.stringify(
+              {type: 'user-left', userId: userId, userName: userName}));
         }
       });
     });
@@ -493,12 +488,35 @@ app.get('/api/stats/global', (req, res) => {
   });
 });
 
+const USE_JUDGE0 = process.env.USE_JUDGE0 !== 'false';
+
 // Code execution endpoint using Judge0 CE API
 app.post('/api/execute-code', async (req, res) => {
   const {code, language = 'javascript', testCases = []} = req.body;
 
   if (!code) {
     return res.status(400).json({error: 'Code is required'});
+  }
+
+  if (!USE_JUDGE0) {
+    // Judge0 is disabled: always return wrong answer
+    const response = {
+      success: false,
+      status: 'Wrong Answer',
+      output: '',
+      error: '',
+      compileOutput: '',
+      time: 0,
+      memory: 0,
+      language,
+      testCases: testCases.map(testCase => ({
+                                 input: testCase.input,
+                                 expected: testCase.expected,
+                                 actual: '',
+                                 passed: false
+                               }))
+    };
+    return res.json(response);
   }
 
   try {
@@ -573,8 +591,10 @@ app.post('/api/execute-code', async (req, res) => {
     while (attempts < maxAttempts) {
       await new Promise(resolve => setTimeout(resolve, 1000));  // Wait 1 second
 
-      const statusResponse =
-          await axios.get(`${JUDGE0_BASE_URL.replace(/\/+$/, '')}/submissions/${submissionToken}`, {
+      const statusResponse = await axios.get(
+          `${JUDGE0_BASE_URL.replace(/\/+$/, '')}/submissions/${
+              submissionToken}`,
+          {
             headers: {
               'X-RapidAPI-Key': JUDGE0_API_KEY,
               'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
@@ -681,7 +701,9 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📡 WebSocket server running on ws://localhost:3002`);
   console.log(`📊 API available at http://localhost:${PORT}/api`);
-  console.log('JUDGE0_API_KEY loaded:', process.env.JUDGE0_API_KEY ? '[HIDDEN]' : 'undefined');
+  console.log(
+      'JUDGE0_API_KEY loaded:',
+      process.env.JUDGE0_API_KEY ? '[HIDDEN]' : 'undefined');
 });
 
 module.exports = app;
