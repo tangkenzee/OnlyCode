@@ -12,7 +12,7 @@ import CollaborativeSolve from "@/components/CollaborativeSolve";
 import type { Problem } from "@/lib/types";
 import { api } from "@/lib/api-simple";
 import type { CodeExecutionResult } from "@/lib/api-simple";
-import Editor from "@monaco-editor/React";
+import Editor from "@monaco-editor/react";
 
 const SAMPLE_PROBLEM: Problem & { examples: Array<{ input: string; output: string; explanation: string }> } = {
   id: "1",

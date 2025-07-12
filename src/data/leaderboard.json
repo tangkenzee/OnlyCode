@@ -1,0 +1,59 @@
+{
+  "leaderboard": [
+    {
+      "id": 1,
+      "name": "Sarah Chen",
+      "avatar": "SC",
+      "xp": 3420,
+      "helpCount": 234,
+      "rating": 4.9,
+      "badges": ["Algorithm Master", "Quick Responder", "Patience Award"],
+      "rank": 1,
+      "change": 0
+    },
+    {
+      "id": 2,
+      "name": "David Kumar",
+      "avatar": "DK",
+      "xp": 3180,
+      "helpCount": 198,
+      "rating": 4.8,
+      "badges": ["Tree Expert", "Problem Solver", "Mentor"],
+      "rank": 2,
+      "change": 1
+    },
+    {
+      "id": 3,
+      "name": "Emma Rodriguez",
+      "avatar": "ER",
+      "xp": 2950,
+      "helpCount": 176,
+      "rating": 4.9,
+      "badges": ["Dynamic Programming Pro", "Kind Helper"],
+      "rank": 3,
+      "change": -1
+    },
+    {
+      "id": 4,
+      "name": "Michael Johnson",
+      "avatar": "MJ",
+      "xp": 2780,
+      "helpCount": 165,
+      "rating": 4.7,
+      "badges": ["Graph Theory Guru", "Fast Helper"],
+      "rank": 4,
+      "change": 2
+    },
+    {
+      "id": 5,
+      "name": "Lisa Wang",
+      "avatar": "LW",
+      "xp": 2650,
+      "helpCount": 142,
+      "rating": 4.8,
+      "badges": ["Array Specialist", "Clear Explainer"],
+      "rank": 5,
+      "change": 0
+    }
+  ]
+}
