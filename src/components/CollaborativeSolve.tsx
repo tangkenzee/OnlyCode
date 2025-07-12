@@ -186,7 +186,7 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-        <div className="p-6 h-[80vh] w-full flex flex-col">
+        <div className="p-6 w-full flex flex-col" style={{ minHeight: '60vh', height: 'auto', maxHeight: '80vh' }}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
@@ -197,8 +197,8 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 flex flex-col lg:flex-row gap-6 w-full h-full">
-            <div className="flex-1 h-full">
+          <div className="flex-1 flex flex-col lg:flex-row gap-6 w-full" style={{ minHeight: '40vh', height: '100%' }}>
+            <div className="flex-1">
               {/* Available Collaborators Card */}
               <Card className="h-full flex flex-col">
                 <CardHeader>
@@ -260,7 +260,7 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
               </Card>
             </div>
             {selectedCollaborators.length > 0 && (
-              <div className="flex-1 h-full">
+              <div className="flex-1">
                 {/* Session Info Card */}
                 <Card className="h-full flex flex-col">
                   <CardHeader>
