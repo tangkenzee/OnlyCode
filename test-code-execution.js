@@ -3,7 +3,7 @@
 
 const axios = require('axios');
 
-const JUDGE0_API_KEY = 'your-rapidapi-key-here'; // Replace with your actual key
+const JUDGE0_API_KEY = '78ba509ffbmsh8dad8d445390d69p169624jsn3cdc7afab524'; // Replace with your actual key
 const JUDGE0_BASE_URL = 'https://judge0-ce.p.rapidapi.com';
 
 async function testCodeExecution() {

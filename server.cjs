@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Judge0 CE API Configuration
-const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY || 'your-rapidapi-key-here';
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY || '78ba509ffbmsh8dad8d445390d69p169624jsn3cdc7afab524';
 const JUDGE0_BASE_URL = 'https://judge0-ce.p.rapidapi.com';
 
 // Middleware
@@ -282,12 +282,36 @@ app.post('/api/execute-code', async (req, res) => {
       time: result.time || 0,
       memory: result.memory || 0,
       language: language,
-      testCases: testCases.map((testCase, index) => ({
-        input: testCase.input,
-        expected: testCase.expected,
-        actual: index === 0 ? result.stdout : 'Not executed',
-        passed: index === 0 ? (result.status.id === 3 && result.stdout?.trim() === testCase.expected?.toString()) : false
-      }))
+      testCases: testCases.map((testCase, index) => {
+        let passed = false;
+        if (index === 0 && result.status.id === 3) {
+          let actual = result.stdout?.trim();
+          let expected = testCase.expected?.toString();
+          try {
+            const actualJson = JSON.parse(actual);
+            const expectedJson = JSON.parse(expected);
+            passed = JSON.stringify(actualJson) === JSON.stringify(expectedJson);
+          } catch {
+            // Compare as arrays of CSV values
+            const extractCSV = (str) => str.replace(/\[|\]|\s|\n/g, '').trim();
+            const actualCSV = extractCSV(actual).split(',');
+            const expectedCSV = extractCSV(expected).split(',');
+            console.log('DEBUG:', { actual, expected, actualCSV, expectedCSV });
+            if (actual && expected && actualCSV.length === expectedCSV.length && actualCSV.every((v, i) => v === expectedCSV[i])) {
+              passed = true;
+            } else {
+              // Fallback to whitespace-insensitive string comparison
+              passed = actual?.replace(/\s+/g, '') === expected?.replace(/\s+/g, '');
+            }
+          }
+        }
+        return {
+          input: testCase.input,
+          expected: testCase.expected,
+          actual: index === 0 ? result.stdout : 'Not executed',
+          passed
+        };
+      })
     };
 
     res.json(response);

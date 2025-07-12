@@ -180,8 +180,42 @@ class SimpleApiClient {
     }
 
     return response.json();
-  },
+  }
 }
+
+export const api = {
+  // User Management
+  async getCurrentUser(): Promise<User> {
+    return apiClient.getCurrentUser();
+  },
+
+  // Help Requests
+  async getHelpRequests(filters?: {
+    difficulty?: string;
+    status?: string;
+  }): Promise<HelpRequest[]> {
+    return apiClient.getHelpRequests(filters);
+  },
+
+  async acceptHelpRequest(requestId: string): Promise<any> {
+    return apiClient.acceptHelpRequest(requestId);
+  },
+
+  // Leaderboard
+  async getLeaderboard(limit: number = 50): Promise<LeaderboardEntry[]> {
+    return apiClient.getLeaderboard(limit);
+  },
+
+  // Health check
+  async healthCheck(): Promise<{ status: string; timestamp: string }> {
+    return apiClient.healthCheck();
+  },
+
+  // Code execution
+  async executeCode(request: CodeExecutionRequest): Promise<CodeExecutionResult> {
+    return apiClient.executeCode(request);
+  }
+};
 
 export const apiClient = new SimpleApiClient();
 export default apiClient; 
