@@ -26,9 +26,8 @@ const CollaborationModal = ({ isOpen, onClose }: CollaborationModalProps) => {
     // Simulate accepting collaboration
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Navigate to collaborative session
-    const sessionId = Math.random().toString(36).substring(7);
-    navigate(`/collaborative-solve/${sessionId}`);
+    // Navigate to pair programming
+    navigate('/pair-programming');
     
     onClose();
     setIsAccepting(false);
