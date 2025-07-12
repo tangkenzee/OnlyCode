@@ -11,6 +11,14 @@
       "rank": 6,
       "totalHelped": 134,
       "rating": 4.6,
+      "overallRating": 4.6,
+      "skillRatings": {
+        "arrays": 4.5,
+        "hashtable": 4.8,
+        "strings": 4.7,
+        "trees": 4.2,
+        "dynamic programming": 4.0
+      },
       "badges": [
         { "id": "badge1", "name": "String Master", "description": "Helped 25+ people with string problems", "earned": "2024-01-15" },
         { "id": "badge2", "name": "Helpful", "description": "Maintained 4.5+ rating for 30 days", "earned": "2024-02-20" }
@@ -209,6 +217,35 @@
         "Hash Table": 15,
         "Array": 11,
         "String": 6
+      }
+    },
+    "user2": {
+      "id": "user2",
+      "name": "Sarah Chen",
+      "avatar": "SC",
+      "email": "sarah@example.com",
+      "joinDate": "2024-02-15",
+      "currentXP": 1890,
+      "nextLevelXP": 2000,
+      "rank": 12,
+      "totalHelped": 89,
+      "rating": 4.9,
+      "overallRating": 4.9,
+      "skillRatings": {
+        "arrays": 4.7,
+        "hashtable": 4.6,
+        "strings": 4.8,
+        "trees": 4.5,
+        "dynamic programming": 4.9
+      },
+      "badges": [
+        { "id": "badge3", "name": "Quick Responder", "description": "Average response time under 3 minutes", "earned": "2024-03-10" }
+      ],
+      "stats": {
+        "problemsSolved": 67,
+        "helpStreak": 8,
+        "avgResponseTime": "1.8 min",
+        "favoriteTopics": ["Dynamic Programming", "Graphs", "Trees"]
       }
     }
   },
