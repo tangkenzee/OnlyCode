@@ -108,10 +108,7 @@ const HelpRequest = () => {
     // Simulate response from the other party
     setTimeout(() => {
       const responses = isHelper ? [
-        "Thanks for the hint! Let me try that approach.",
-        "I see what you mean. Should I use a hash map for this?",
-        "That makes sense! I was overcomplicating it.",
-        "Could you help me understand why that's more efficient?"
+        "Thanks for the hint! Let me try that approach."
       ] : [
         "That's a good start! Have you considered using a hash map to store the values you've seen?",
         "The time complexity can be improved from O(n²) to O(n). Think about what data structure could help you look up values quickly.",

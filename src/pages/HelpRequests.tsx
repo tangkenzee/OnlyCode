@@ -215,15 +215,6 @@ const HelpRequests = () => {
             </div>
           </div>
 
-          {/* Only show the button if helpRequests is null or not loaded */}
-          {!fetchRequests && (
-            <div className="text-center py-8">
-              <Button onClick={handleLoadRequests}>
-                Load Open Requests
-              </Button>
-            </div>
-          )}
-
           {fetchRequests && loading ? (
             <div className="text-center py-8">
               <div className="text-muted-foreground">Loading help requests...</div>
@@ -385,6 +376,13 @@ const HelpRequests = () => {
             ))}
             </div>
           )}
+        </div>
+
+        {/* Add Refresh Requests button at the bottom */}
+        <div className="text-center py-8">
+          <Button onClick={handleLoadRequests}>
+            Refresh Requests
+          </Button>
         </div>
 
         {/* Helper Tips */}

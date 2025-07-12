@@ -85,7 +85,7 @@ const Index = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-4xl mx-auto">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Active Helpers</CardTitle>
@@ -113,7 +113,6 @@ const Index = () => {
               <p className="text-xs text-muted-foreground">Active right now</p>
             </CardContent>
           </Card>
-          <ApiStatus />
         </div>
 
         {/* Filter Tabs */}
