@@ -1,7 +1,7 @@
 {
-  "name": "buddy-code-mentor-backend",
+  "name": "onlycode-backend",
   "version": "1.0.0",
-  "description": "Backend API for Buddy Code Mentor",
+  "description": "Backend API for OnlyCode",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -21,6 +21,6 @@
     "jest": "^29.7.0"
   },
   "keywords": ["api", "backend", "websocket", "express"],
-  "author": "Buddy Code Mentor Team",
+  "author": "OnlyCode Team",
   "license": "MIT"
-} 
+}

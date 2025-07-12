@@ -1,5 +1,6 @@
-// API client for Buddy Code Mentor backend
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+// API client for OnlyCode backend
+const API_BASE_URL =
+    import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 export interface User {
   id: string;
@@ -34,7 +35,7 @@ export interface UserStats {
 export interface HelpRequest {
   id: string;
   problemTitle: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: 'Easy'|'Medium'|'Hard';
   requesterId: string;
   requesterName: string;
   timeStuck: string;
@@ -42,7 +43,7 @@ export interface HelpRequest {
   message: string;
   tags: string[];
   urgent: boolean;
-  status: 'open' | 'matched' | 'completed';
+  status: 'open'|'matched'|'completed';
   createdAt: string;
   code?: string;
 }
@@ -54,7 +55,7 @@ export interface ChatMessage {
   senderName: string;
   message: string;
   timestamp: string;
-  type: 'text' | 'code' | 'hint';
+  type: 'text'|'code'|'hint';
 }
 
 export interface HelpSession {
@@ -62,7 +63,7 @@ export interface HelpSession {
   requestId: string;
   requesterId: string;
   helperId: string;
-  status: 'active' | 'completed' | 'cancelled';
+  status: 'active'|'completed'|'cancelled';
   messages: ChatMessage[];
   startedAt: string;
   endedAt?: string;
@@ -73,7 +74,7 @@ export interface HelpSession {
 export interface Problem {
   id: string;
   title: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: 'Easy'|'Medium'|'Hard';
   description: string;
   tags: string[];
   testCases: TestCase[];
@@ -103,15 +104,13 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit = {}):
+      Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
-        'user-id': 'user1', // Default user for development
+        'user-id': 'user1',  // Default user for development
         'user-name': 'Alex Thompson',
         ...options.headers,
       },
@@ -121,25 +120,25 @@ class ApiClient {
     try {
       console.log(`Making API request to: ${url}`);
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`API Error ${response.status}: ${errorText}`);
         throw new Error(`HTTP error! status: ${response.status}: ${errorText}`);
       }
-      
+
       const data = await response.json();
       console.log(`API response from ${endpoint}:`, data);
       return data;
     } catch (error) {
       console.error(`API request failed for ${endpoint}:`, error);
-      
+
       // Return mock data for development if backend is not available
       if (error instanceof TypeError && error.message.includes('fetch')) {
         console.warn('Backend not available, using mock data');
         return this.getMockData<T>(endpoint);
       }
-      
+
       throw error;
     }
   }
@@ -159,8 +158,18 @@ class ApiClient {
         totalHelped: 134,
         rating: 4.6,
         badges: [
-          { id: 'badge1', name: 'String Master', description: 'Helped 25+ people with string problems', earned: '2024-01-15' },
-          { id: 'badge2', name: 'Helpful', description: 'Maintained 4.5+ rating for 30 days', earned: '2024-02-20' }
+          {
+            id: 'badge1',
+            name: 'String Master',
+            description: 'Helped 25+ people with string problems',
+            earned: '2024-01-15'
+          },
+          {
+            id: 'badge2',
+            name: 'Helpful',
+            description: 'Maintained 4.5+ rating for 30 days',
+            earned: '2024-02-20'
+          }
         ],
         stats: {
           problemsSolved: 89,
@@ -178,7 +187,8 @@ class ApiClient {
           requesterName: 'Alex Johnson',
           timeStuck: '8 minutes',
           attempts: 4,
-          message: 'I\'m getting a time limit exceeded error. I think my nested loop approach isn\'t efficient enough.',
+          message:
+              'I\'m getting a time limit exceeded error. I think my nested loop approach isn\'t efficient enough.',
           tags: ['Array', 'Hash Table'],
           urgent: false,
           status: 'open',
@@ -193,7 +203,8 @@ class ApiClient {
           requesterName: 'Emma Davis',
           timeStuck: '15 minutes',
           attempts: 6,
-          message: 'Having trouble with the dynamic programming approach. My solution works for small inputs but fails for larger ones.',
+          message:
+              'Having trouble with the dynamic programming approach. My solution works for small inputs but fails for larger ones.',
           tags: ['String', 'Dynamic Programming'],
           urgent: true,
           status: 'open',
@@ -201,9 +212,33 @@ class ApiClient {
         }
       ],
       '/leaderboard': [
-        { rank: 1, userId: 'user1', name: 'Alex Thompson', avatar: 'AT', xp: 2480, totalHelped: 134, rating: 4.6 },
-        { rank: 2, userId: 'user2', name: 'Sarah Chen', avatar: 'SC', xp: 1890, totalHelped: 89, rating: 4.9 },
-        { rank: 3, userId: 'user5', name: 'Mike Wilson', avatar: 'MW', xp: 1650, totalHelped: 67, rating: 4.7 }
+        {
+          rank: 1,
+          userId: 'user1',
+          name: 'Alex Thompson',
+          avatar: 'AT',
+          xp: 2480,
+          totalHelped: 134,
+          rating: 4.6
+        },
+        {
+          rank: 2,
+          userId: 'user2',
+          name: 'Sarah Chen',
+          avatar: 'SC',
+          xp: 1890,
+          totalHelped: 89,
+          rating: 4.9
+        },
+        {
+          rank: 3,
+          userId: 'user5',
+          name: 'Mike Wilson',
+          avatar: 'MW',
+          xp: 1650,
+          totalHelped: 67,
+          rating: 4.7
+        }
       ]
     };
 
@@ -223,27 +258,20 @@ class ApiClient {
   }
 
   // Help Requests
-  async getHelpRequests(filters?: {
-    difficulty?: string;
-    status?: string;
-    tags?: string[];
-  }): Promise<HelpRequest[]> {
+  async getHelpRequests(
+      filters?: {difficulty?: string; status?: string; tags?: string[];}):
+      Promise<HelpRequest[]> {
     const params = new URLSearchParams();
     if (filters?.difficulty) params.append('difficulty', filters.difficulty);
     if (filters?.status) params.append('status', filters.status);
     if (filters?.tags) params.append('tags', filters.tags.join(','));
-    
+
     return this.request<HelpRequest[]>(`/help-requests?${params.toString()}`);
   }
 
   async createHelpRequest(data: {
-    problemTitle: string;
-    difficulty: string;
-    message: string;
-    tags: string[];
-    code?: string;
-    attempts: number;
-    timeStuck: string;
+    problemTitle: string; difficulty: string; message: string; tags: string[];
+    code?: string; attempts: number; timeStuck: string;
   }): Promise<HelpRequest> {
     return this.request<HelpRequest>('/help-requests', {
       method: 'POST',
@@ -265,26 +293,25 @@ class ApiClient {
   async sendMessage(sessionId: string, message: string): Promise<ChatMessage> {
     return this.request<ChatMessage>(`/sessions/${sessionId}/messages`, {
       method: 'POST',
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({message}),
     });
   }
 
-  async endSession(sessionId: string, rating?: number, feedback?: string): Promise<HelpSession> {
+  async endSession(sessionId: string, rating?: number, feedback?: string):
+      Promise<HelpSession> {
     return this.request<HelpSession>(`/sessions/${sessionId}/end`, {
       method: 'PUT',
-      body: JSON.stringify({ rating, feedback }),
+      body: JSON.stringify({rating, feedback}),
     });
   }
 
   // Problems
-  async getProblems(filters?: {
-    difficulty?: string;
-    tags?: string[];
-  }): Promise<Problem[]> {
+  async getProblems(filters?: {difficulty?: string; tags?: string[];}):
+      Promise<Problem[]> {
     const params = new URLSearchParams();
     if (filters?.difficulty) params.append('difficulty', filters.difficulty);
     if (filters?.tags) params.append('tags', filters.tags.join(','));
-    
+
     return this.request<Problem[]>(`/problems?${params.toString()}`);
   }
 
@@ -298,16 +325,18 @@ class ApiClient {
   }
 
   // Real-time updates (WebSocket)
-  subscribeToSession(sessionId: string, onMessage: (message: ChatMessage) => void) {
-    const ws = new WebSocket(`${this.baseUrl.replace('http', 'ws')}/sessions/${sessionId}`);
-    
+  subscribeToSession(
+      sessionId: string, onMessage: (message: ChatMessage) => void) {
+    const ws = new WebSocket(
+        `${this.baseUrl.replace('http', 'ws')}/sessions/${sessionId}`);
+
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       onMessage(message);
     };
 
     return {
-      send: (message: string) => ws.send(JSON.stringify({ message })),
+      send: (message: string) => ws.send(JSON.stringify({message})),
       close: () => ws.close(),
     };
   }
@@ -318,9 +347,7 @@ class ApiClient {
   }
 
   async getGlobalStats(): Promise<{
-    totalUsers: number;
-    totalSessions: number;
-    activeSessions: number;
+    totalUsers: number; totalSessions: number; activeSessions: number;
     problemsSolved: number;
   }> {
     return this.request('/stats/global');
@@ -328,4 +355,4 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient();
-export default apiClient; 
+export default apiClient;

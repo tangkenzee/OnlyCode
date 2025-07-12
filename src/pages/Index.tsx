@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,7 +71,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Code className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">CodeBuddy</h1>
+              <h1 className="text-2xl font-bold text-foreground">OnlyCode</h1>
             </div>
             <div className="flex items-center gap-4">
               <Button variant="ghost" onClick={() => navigate('/help-requests')}>

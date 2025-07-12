@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Starting Buddy Code Mentor Server..."
+echo "🚀 Starting OnlyCode Server..."
 
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then
@@ -22,4 +22,4 @@ echo ""
 echo "Press Ctrl+C to stop the server"
 echo ""
 
-npm run server:dev 
+npm run server:dev

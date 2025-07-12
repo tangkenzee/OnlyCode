@@ -1,6 +1,6 @@
-# Buddy Code Mentor Backend
+# OnlyCode Backend
 
-Express.js backend API for the Buddy Code Mentor application, providing help request management, user statistics, and leaderboard functionality.
+Express.js backend API for the OnlyCode application, providing help request management, user statistics, and leaderboard functionality.
 
 ## Features
 
@@ -212,4 +212,4 @@ npm test
 
 ## License
 
-MIT 
+MIT

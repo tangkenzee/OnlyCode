@@ -1,4 +1,4 @@
-// Simple API client for Buddy Code Mentor
+// Simple API client for OnlyCode
 const API_BASE_URL = 'http://localhost:3001/api';
 
 export interface User {
@@ -33,7 +33,7 @@ export interface UserStats {
 export interface HelpRequest {
   id: string;
   problemTitle: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: 'Easy'|'Medium'|'Hard';
   requesterId: string;
   requesterName: string;
   timeStuck: string;
@@ -41,7 +41,7 @@ export interface HelpRequest {
   message: string;
   tags: string[];
   urgent: boolean;
-  status: 'open' | 'matched' | 'completed';
+  status: 'open'|'matched'|'completed';
   createdAt: string;
   code?: string;
 }
@@ -65,7 +65,7 @@ class SimpleApiClient {
 
   private async request<T>(endpoint: string): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     try {
       console.log(`API request: ${url}`);
       const response = await fetch(url, {
@@ -74,11 +74,11 @@ class SimpleApiClient {
           'user-id': 'user1',
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       console.log(`API response:`, data);
       return data;
@@ -94,14 +94,12 @@ class SimpleApiClient {
   }
 
   // Help Requests
-  async getHelpRequests(filters?: {
-    difficulty?: string;
-    status?: string;
-  }): Promise<HelpRequest[]> {
+  async getHelpRequests(filters?: {difficulty?: string; status?: string;}):
+      Promise<HelpRequest[]> {
     const params = new URLSearchParams();
     if (filters?.difficulty) params.append('difficulty', filters.difficulty);
     if (filters?.status) params.append('status', filters.status);
-    
+
     const query = params.toString();
     const endpoint = query ? `/help-requests?${query}` : '/help-requests';
     return this.request<HelpRequest[]>(endpoint);
@@ -109,7 +107,7 @@ class SimpleApiClient {
 
   async acceptHelpRequest(requestId: string): Promise<any> {
     const url = `${this.baseUrl}/help-requests/${requestId}/accept`;
-    
+
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -118,11 +116,11 @@ class SimpleApiClient {
           'user-id': 'user1',
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Accept help request failed:', error);
@@ -136,10 +134,10 @@ class SimpleApiClient {
   }
 
   // Health check
-  async healthCheck(): Promise<{ status: string; timestamp: string }> {
-    return this.request<{ status: string; timestamp: string }>('/health');
+  async healthCheck(): Promise<{status: string; timestamp: string}> {
+    return this.request<{status: string; timestamp: string}>('/health');
   }
 }
 
 export const apiClient = new SimpleApiClient();
-export default apiClient; 
+export default apiClient;

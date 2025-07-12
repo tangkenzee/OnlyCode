@@ -1,4 +1,4 @@
-# Buddy Code Mentor
+# OnlyCode
 
 ## Project Overview
 A modern React + TypeScript app with custom UI components, Tailwind CSS, and Vite. This project helps users request and solve coding problems collaboratively with peer-to-peer assistance.
