@@ -8,8 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Judge0 CE API Configuration
-const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY ||
-                       '78ba509ffbmsh8dad8d445390d69p169624jsn3cdc7afab524';
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
 const JUDGE0_BASE_URL = 'https://judge0-ce.p.rapidapi.com';
 
 // Middleware
