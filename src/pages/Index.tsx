@@ -195,27 +195,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Floating Collaborative Button */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <Button
-          size="lg"
-          className="rounded-full w-14 h-14 shadow-lg"
-          onClick={() => {
-            setSelectedProblem({
-              id: "1",
-              title: "Two Sum",
-              difficulty: "Easy",
-              description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-              tags: ["Array", "Hash Table"],
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            });
-            setIsCollaborativeOpen(true);
-          }}
-        >
-          <Users className="h-6 w-6" />
-        </Button>
-      </div>
+
 
       {/* Collaborative Solve Modal */}
       {selectedProblem && (
