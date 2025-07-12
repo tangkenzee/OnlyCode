@@ -6,10 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Play, RotateCcw, HelpCircle, Clock, AlertTriangle, Users } from "lucide-react";
+import { ArrowLeft, Play, RotateCcw, HelpCircle, Clock, AlertTriangle, Users, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import CollaborativeSolve from "@/components/CollaborativeSolve";
 import type { Problem } from "@/lib/types";
+import { api } from "@/lib/api-simple";
+import type { CodeExecutionResult } from "@/lib/api-simple";
 import Editor from "@monaco-editor/React";
 
 const SAMPLE_PROBLEM: Problem & { examples: Array<{ input: string; output: string; explanation: string }> } = {
@@ -53,14 +55,30 @@ const ProblemSolver = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState(`function twoSum(nums, target) {
     // Your code here
+    const map = new Map();
     
-}`);
+    for (let i = 0; i < nums.length; i++) {
+        const complement = target - nums[i];
+        if (map.has(complement)) {
+            return [map.get(complement), i];
+        }
+        map.set(nums[i], i);
+    }
+    
+    return [];
+}
+
+// Test the function
+console.log(twoSum([2, 7, 11, 15], 9)); // Should output [0, 1]
+console.log(twoSum([3, 2, 4], 6)); // Should output [1, 2]
+console.log(twoSum([3, 3], 6)); // Should output [0, 1]`);
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [canRequestHelp, setCanRequestHelp] = useState(false);
   const [isCollaborativeOpen, setIsCollaborativeOpen] = useState(false);
+  const [executionResult, setExecutionResult] = useState<CodeExecutionResult | null>(null);
 
   // Mock current user data
   const currentUser = {
@@ -92,7 +110,7 @@ const ProblemSolver = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const runCode = () => {
+  const runCode = async () => {
     setIsRunning(true);
     setAttempts(prev => {
       const newAttempts = prev + 1;
@@ -102,43 +120,98 @@ const ProblemSolver = () => {
       return newAttempts;
     });
 
-    // Simulate code execution
-    setTimeout(() => {
-      try {
-        // Simple test execution simulation
-        const testCases = SAMPLE_PROBLEM.testCases || [
-          { input: [[2,7,11,15], 9], expected: [0,1] },
-          { input: [[3,2,4], 6], expected: [1,2] },
-          { input: [[3,3], 6], expected: [0,1] }
-        ];
-        
-        const testResult = testCases.map((test, index) => {
-          return `Test Case ${index + 1}: Input ${JSON.stringify(test.input)} -> Expected ${JSON.stringify(test.expected)}`;
-        }).join('\n');
-        
-        setOutput(`Running tests...\n\n${testResult}\n\nPlease implement your solution to see actual results.`);
+    try {
+      const testCases = SAMPLE_PROBLEM.testCases || [
+        { input: [[2,7,11,15], 9], expected: [0,1] },
+        { input: [[3,2,4], 6], expected: [1,2] },
+        { input: [[3,3], 6], expected: [0,1] }
+      ];
+
+      const result = await api.executeCode({
+        code,
+        language: 'javascript',
+        testCases: testCases.map(test => ({
+          input: JSON.stringify(test.input),
+          expected: JSON.stringify(test.expected)
+        }))
+      });
+
+      setExecutionResult(result);
+      
+      // Format output for display
+      let outputText = `Status: ${result.status}\n`;
+      outputText += `Time: ${result.time}ms\n`;
+      outputText += `Memory: ${result.memory}KB\n\n`;
+      
+      if (result.output) {
+        outputText += `Output:\n${result.output}\n\n`;
+      }
+      
+      if (result.error) {
+        outputText += `Error:\n${result.error}\n\n`;
+      }
+      
+      if (result.compileOutput) {
+        outputText += `Compilation Output:\n${result.compileOutput}\n\n`;
+      }
+      
+      outputText += `Test Cases:\n`;
+      result.testCases.forEach((testCase, index) => {
+        outputText += `Test ${index + 1}: ${testCase.passed ? '✅ PASSED' : '❌ FAILED'}\n`;
+        outputText += `  Input: ${testCase.input}\n`;
+        outputText += `  Expected: ${testCase.expected}\n`;
+        outputText += `  Actual: ${testCase.actual}\n\n`;
+      });
+
+      setOutput(outputText);
+
+      if (result.success) {
         toast({
-          title: "Code executed",
-          description: "Check the output panel for results."
+          title: "Code executed successfully!",
+          description: "All test cases passed.",
         });
-      } catch (error) {
-        setOutput(`Error: ${error}`);
+      } else {
         toast({
-          title: "Execution failed",
-          description: "Check your code for syntax errors.",
+          title: "Code execution failed",
+          description: result.status,
           variant: "destructive"
         });
       }
+    } catch (error) {
+      console.error('Code execution error:', error);
+      setOutput(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+      toast({
+        title: "Execution failed",
+        description: "Check your code for syntax errors.",
+        variant: "destructive"
+      });
+    } finally {
       setIsRunning(false);
-    }, 1000);
+    }
   };
 
   const resetCode = () => {
     setCode(`function twoSum(nums, target) {
     // Your code here
+    const map = new Map();
     
-}`);
+    for (let i = 0; i < nums.length; i++) {
+        const complement = target - nums[i];
+        if (map.has(complement)) {
+            return [map.get(complement), i];
+        }
+        map.set(nums[i], i);
+    }
+    
+    return [];
+}
+
+// Test the function
+console.log(twoSum([2, 7, 11, 15], 9)); // Should output [0, 1]
+console.log(twoSum([3, 2, 4], 6)); // Should output [1, 2]
+console.log(twoSum([3, 3], 6)); // Should output [0, 1]`);
     setOutput("");
+    setExecutionResult(null);
     toast({
       title: "Code reset",
       description: "Starter code has been restored."
