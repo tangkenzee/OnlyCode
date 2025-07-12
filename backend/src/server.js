@@ -546,7 +546,7 @@ app.post('/api/execute-code', async (req, res) => {
 
     // Submit code for compilation
     const submitResponse = await axios.post(
-        `${JUDGE0_BASE_URL}/submissions`, {
+        `${JUDGE0_BASE_URL.replace(/\/+$/, '')}/submissions`, {
           source_code: code,
           language_id: languageId,
           stdin: testCases.length > 0 ? testCases[0].input : '',
@@ -574,7 +574,7 @@ app.post('/api/execute-code', async (req, res) => {
       await new Promise(resolve => setTimeout(resolve, 1000));  // Wait 1 second
 
       const statusResponse =
-          await axios.get(`${JUDGE0_BASE_URL}/submissions/${submissionToken}`, {
+          await axios.get(`${JUDGE0_BASE_URL.replace(/\/+$/, '')}/submissions/${submissionToken}`, {
             headers: {
               'X-RapidAPI-Key': JUDGE0_API_KEY,
               'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
@@ -656,10 +656,14 @@ app.post('/api/execute-code', async (req, res) => {
 
   } catch (error) {
     console.error('Code execution error:', error);
+    if (error.response) {
+      console.error('Judge0 API error response:', error.response.data);
+    }
     res.status(500).json({
       success: false,
       error: 'Code execution failed',
-      details: error.message
+      details: error.message,
+      judge0: error.response ? error.response.data : undefined
     });
   }
 });
@@ -677,6 +681,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📡 WebSocket server running on ws://localhost:3002`);
   console.log(`📊 API available at http://localhost:${PORT}/api`);
+  console.log('JUDGE0_API_KEY loaded:', process.env.JUDGE0_API_KEY ? '[HIDDEN]' : 'undefined');
 });
 
 module.exports = app;
