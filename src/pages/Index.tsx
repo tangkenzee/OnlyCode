@@ -15,19 +15,20 @@ const Index = () => {
   const [isCollaborativeOpen, setIsCollaborativeOpen] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
   const [problems, setProblems] = useState<Problem[]>([]);
-
-  // Mock current user data
-  const currentUser = {
-    id: "current-user",
-    name: "You",
-    avatar: "U",
-    rating: 4.5,
-    xp: 1200
-  };
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     apiClient.getProblems().then((data) => {
-      setProblems(data);
+      // Ensure all problems have createdAt and updatedAt fields
+      const problemsWithDates = data.map((p: any) => ({
+        ...p,
+        createdAt: p.createdAt || new Date().toISOString(),
+        updatedAt: p.updatedAt || new Date().toISOString(),
+      }));
+      setProblems(problemsWithDates);
+    });
+    apiClient.getCurrentUser().then((user) => {
+      setCurrentUser(user);
     });
   }, []);
 
