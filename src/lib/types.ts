@@ -1,7 +1,7 @@
 export interface Problem {
   id: string;
   title: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: 'Easy'|'Medium'|'Hard';
   description: string;
   solution?: string;
   tags: string[];
@@ -21,6 +21,7 @@ export interface User {
   isOnline: boolean;
   lastSeen: Date;
   skills: string[];
+  tagSkillLevels?: Record<string, number>;
 }
 
 export interface ChatMessage {
@@ -28,7 +29,7 @@ export interface ChatMessage {
   sender: string;
   message: string;
   timestamp: Date;
-  type: 'text' | 'code' | 'hint';
+  type: 'text'|'code'|'hint';
 }
 
 export interface Collaborator {
@@ -40,4 +41,5 @@ export interface Collaborator {
   isOnline: boolean;
   lastSeen: Date;
   skills: string[];
-} 
+  tagSkillLevels?: Record<string, number>;
+}

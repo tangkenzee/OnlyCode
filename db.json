@@ -20,6 +20,195 @@
         "helpStreak": 12,
         "avgResponseTime": "2.3 min",
         "favoriteTopics": ["Strings", "Arrays", "Trees"]
+      },
+      "tagSkillLevels": {
+        "Array": 12,
+        "Hash Table": 8,
+        "String": 15,
+        "Tree": 5,
+        "Graph": 3
+      }
+    },
+    "user2": {
+      "id": "user2",
+      "name": "Sarah Chen",
+      "avatar": "SC",
+      "email": "sarah.chen@example.com",
+      "joinDate": "2024-04-10",
+      "currentXP": 1890,
+      "nextLevelXP": 2200,
+      "rank": 2,
+      "totalHelped": 89,
+      "rating": 4.9,
+      "badges": [
+        { "id": "badge3", "name": "Array Ace", "description": "Solved 20+ array problems", "earned": "2024-05-01" }
+      ],
+      "stats": {
+        "problemsSolved": 72,
+        "helpStreak": 8,
+        "avgResponseTime": "1.8 min",
+        "favoriteTopics": ["Arrays", "Graphs", "Strings"]
+      },
+      "tagSkillLevels": {
+        "Array": 18,
+        "Graph": 7,
+        "String": 10,
+        "Dynamic Programming": 4
+      }
+    },
+    "user3": {
+      "id": "user3",
+      "name": "Alex Johnson",
+      "avatar": "AJ",
+      "email": "alex.johnson@example.com",
+      "joinDate": "2024-05-15",
+      "currentXP": 1420,
+      "nextLevelXP": 1600,
+      "rank": 4,
+      "totalHelped": 54,
+      "rating": 4.7,
+      "badges": [
+        { "id": "badge4", "name": "Graph Guru", "description": "Solved 10+ graph problems", "earned": "2024-06-10" }
+      ],
+      "stats": {
+        "problemsSolved": 41,
+        "helpStreak": 5,
+        "avgResponseTime": "2.9 min",
+        "favoriteTopics": ["Graphs", "Trees"]
+      },
+      "tagSkillLevels": {
+        "Graph": 11,
+        "Tree": 6,
+        "Array": 5
+      }
+    },
+    "user4": {
+      "id": "user4",
+      "name": "Emma Davis",
+      "avatar": "ED",
+      "email": "emma.davis@example.com",
+      "joinDate": "2024-06-02",
+      "currentXP": 1100,
+      "nextLevelXP": 1300,
+      "rank": 5,
+      "totalHelped": 32,
+      "rating": 4.5,
+      "badges": [
+        { "id": "badge5", "name": "String Specialist", "description": "Solved 15+ string problems", "earned": "2024-06-20" }
+      ],
+      "stats": {
+        "problemsSolved": 29,
+        "helpStreak": 3,
+        "avgResponseTime": "3.1 min",
+        "favoriteTopics": ["Strings", "Binary Search"]
+      },
+      "tagSkillLevels": {
+        "String": 14,
+        "Binary Search": 5,
+        "Array": 3
+      }
+    },
+    "user5": {
+      "id": "user5",
+      "name": "Mike Wilson",
+      "avatar": "MW",
+      "email": "mike.wilson@example.com",
+      "joinDate": "2024-02-18",
+      "currentXP": 1650,
+      "nextLevelXP": 1800,
+      "rank": 3,
+      "totalHelped": 67,
+      "rating": 4.7,
+      "badges": [
+        { "id": "badge6", "name": "Tree Tactician", "description": "Solved 12+ tree problems", "earned": "2024-03-15" }
+      ],
+      "stats": {
+        "problemsSolved": 55,
+        "helpStreak": 7,
+        "avgResponseTime": "2.5 min",
+        "favoriteTopics": ["Trees", "Graphs"]
+      },
+      "tagSkillLevels": {
+        "Tree": 13,
+        "Graph": 9,
+        "Array": 7
+      }
+    },
+    "user6": {
+      "id": "user6",
+      "name": "Priya Patel",
+      "avatar": "PP",
+      "email": "priya.patel@example.com",
+      "joinDate": "2024-07-01",
+      "currentXP": 980,
+      "nextLevelXP": 1200,
+      "rank": 7,
+      "totalHelped": 21,
+      "rating": 4.3,
+      "badges": [
+        { "id": "badge7", "name": "DP Dynamo", "description": "Solved 8+ dynamic programming problems", "earned": "2024-07-10" }
+      ],
+      "stats": {
+        "problemsSolved": 19,
+        "helpStreak": 2,
+        "avgResponseTime": "3.7 min",
+        "favoriteTopics": ["Dynamic Programming", "Arrays"]
+      },
+      "tagSkillLevels": {
+        "Dynamic Programming": 8,
+        "Array": 6
+      }
+    },
+    "user7": {
+      "id": "user7",
+      "name": "John Lee",
+      "avatar": "JL",
+      "email": "john.lee@example.com",
+      "joinDate": "2024-03-25",
+      "currentXP": 1200,
+      "nextLevelXP": 1400,
+      "rank": 8,
+      "totalHelped": 28,
+      "rating": 4.4,
+      "badges": [
+        { "id": "badge8", "name": "Stack Savant", "description": "Solved 10+ stack problems", "earned": "2024-04-05" }
+      ],
+      "stats": {
+        "problemsSolved": 23,
+        "helpStreak": 4,
+        "avgResponseTime": "2.8 min",
+        "favoriteTopics": ["Stack", "Two Pointers"]
+      },
+      "tagSkillLevels": {
+        "Stack": 10,
+        "Two Pointers": 4,
+        "Array": 2
+      }
+    },
+    "user8": {
+      "id": "user8",
+      "name": "Linda Nguyen",
+      "avatar": "LN",
+      "email": "linda.nguyen@example.com",
+      "joinDate": "2024-01-30",
+      "currentXP": 2100,
+      "nextLevelXP": 2500,
+      "rank": 1,
+      "totalHelped": 102,
+      "rating": 4.8,
+      "badges": [
+        { "id": "badge9", "name": "Hash Table Hero", "description": "Solved 15+ hash table problems", "earned": "2024-02-28" }
+      ],
+      "stats": {
+        "problemsSolved": 77,
+        "helpStreak": 9,
+        "avgResponseTime": "2.1 min",
+        "favoriteTopics": ["Hash Table", "Array"]
+      },
+      "tagSkillLevels": {
+        "Hash Table": 15,
+        "Array": 11,
+        "String": 6
       }
     }
   },
@@ -59,4 +248,4 @@
     { "rank": 2, "userId": "user2", "name": "Sarah Chen", "avatar": "SC", "xp": 1890, "totalHelped": 89, "rating": 4.9 },
     { "rank": 3, "userId": "user5", "name": "Mike Wilson", "avatar": "MW", "xp": 1650, "totalHelped": 67, "rating": 4.7 }
   ]
-} 
+}

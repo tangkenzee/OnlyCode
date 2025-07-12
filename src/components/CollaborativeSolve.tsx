@@ -41,6 +41,7 @@ interface Collaborator {
   isOnline: boolean;
   lastSeen: Date;
   skills: string[];
+  tagSkillLevels?: Record<string, number>;
 }
 
 const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: CollaborativeSolveProps) => {
@@ -244,9 +245,9 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
                         </div>
                         
                         <div className="mt-3 flex gap-1">
-                          {collaborator.skills.slice(0, 3).map(skill => (
-                            <Badge key={skill} variant="secondary" className="text-xs">
-                              {skill}
+                          {problem.tags.map(tag => (
+                            <Badge key={tag} variant="secondary" className="text-xs">
+                              {tag} Level: {collaborator.tagSkillLevels?.[tag] ?? 0}
                             </Badge>
                           ))}
                         </div>
@@ -367,4 +368,4 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
   );
 };
 
-export default CollaborativeSolve; 
+export default CollaborativeSolve;
