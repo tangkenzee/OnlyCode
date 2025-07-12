@@ -10,6 +10,7 @@ import { ArrowLeft, Play, RotateCcw, HelpCircle, Clock, AlertTriangle, Users } f
 import { toast } from "@/hooks/use-toast";
 import CollaborativeSolve from "@/components/CollaborativeSolve";
 import type { Problem } from "@/lib/types";
+import Editor from "@monaco-editor/React";
 
 const SAMPLE_PROBLEM: Problem & { examples: Array<{ input: string; output: string; explanation: string }> } = {
   id: "1",
@@ -270,11 +271,13 @@ const ProblemSolver = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <Textarea
+                {/*This is the Monaco Editor */}
+                <Editor
+                  height="300px"
+                  defaultLanguage="javascript"
                   value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  className="font-mono text-sm min-h-[300px] resize-none"
-                  placeholder="Write your solution here..."
+                  onChange={(value) => setCode(value || "")}
+                  theme="vs-light"
                 />
               </CardContent>
             </Card>
