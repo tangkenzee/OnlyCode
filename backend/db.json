@@ -288,6 +288,125 @@
       ],
       "createdAt": "2024-07-11T00:00:00.000Z",
       "updatedAt": "2024-07-11T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "title": "Valid Parentheses",
+      "difficulty": "Easy",
+      "description": "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+      "tags": ["Stack", "String"],
+      "testCases": [
+        { "input": "()", "output": "true" },
+        { "input": "()[]{}", "output": "true" },
+        { "input": "(]", "output": "false" }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "title": "Merge Intervals",
+      "difficulty": "Medium",
+      "description": "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals.",
+      "tags": ["Array", "Sorting"],
+      "testCases": [
+        { "input": "[[1,3],[2,6],[8,10],[15,18]]", "output": "[[1,6],[8,10],[15,18]]" },
+        { "input": "[[1,4],[4,5]]", "output": "[[1,5]]" }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
+    },
+    {
+      "id": "6",
+      "title": "Longest Substring Without Repeating Characters",
+      "difficulty": "Medium",
+      "description": "Given a string s, find the length of the longest substring without repeating characters.",
+      "tags": ["Hash Table", "String", "Sliding Window"],
+      "testCases": [
+        { "input": "abcabcbb", "output": "3" },
+        { "input": "bbbbb", "output": "1" },
+        { "input": "pwwkew", "output": "3" }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
+    },
+    {
+      "id": "7",
+      "title": "Binary Tree Level Order Traversal",
+      "difficulty": "Medium",
+      "description": "Given the root of a binary tree, return the level order traversal of its nodes' values.",
+      "tags": ["Tree", "Breadth-First Search"],
+      "testCases": [
+        { "input": "[3,9,20,null,null,15,7]", "output": "[[3],[9,20],[15,7]]" }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
+    },
+    {
+      "id": "8",
+      "title": "Word Ladder",
+      "difficulty": "Hard",
+      "description": "Given two words, beginWord and endWord, and a dictionary, return the length of the shortest transformation sequence from beginWord to endWord.",
+      "tags": ["Breadth-First Search", "Hash Table"],
+      "testCases": [
+        { "input": "hit, cog, [hot, dot, dog, lot, log, cog]", "output": "5" }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
+    },
+    {
+      "id": "9",
+      "title": "Median of Two Sorted Arrays",
+      "difficulty": "Hard",
+      "description": "Given two sorted arrays nums1 and nums2, return the median of the two sorted arrays.",
+      "tags": ["Array", "Binary Search", "Divide and Conquer"],
+      "testCases": [
+        { "input": "[1,3], [2]", "output": "2.0" },
+        { "input": "[1,2], [3,4]", "output": "2.5" }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
+    },
+    {
+      "id": "10",
+      "title": "Climbing Stairs",
+      "difficulty": "Easy",
+      "description": "You are climbing a staircase. It takes n steps to reach the top. Each time you can climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+      "tags": ["Dynamic Programming"],
+      "testCases": [
+        { "input": "2", "output": "2" },
+        { "input": "3", "output": "3" }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
+    },
+    {
+      "id": "11",
+      "title": "Number of Islands",
+      "difficulty": "Medium",
+      "description": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.",
+      "tags": ["Depth-First Search", "Breadth-First Search"],
+      "testCases": [
+        { "input": "[[1,1,1,1,0],[1,1,0,1,0],[1,1,0,0,0],[0,0,0,0,0]]", "output": "1" },
+        { "input": "[[1,1,0,0,0],[1,1,0,0,0],[0,0,1,0,0],[0,0,0,1,1]]", "output": "3" }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
+    },
+    {
+      "id": "12",
+      "title": "LRU Cache",
+      "difficulty": "Hard",
+      "description": "Design a data structure that follows the constraints of a Least Recently Used (LRU) cache.",
+      "tags": ["Design", "Hash Table", "Linked List"],
+      "testCases": [
+        {
+          "input": "[\"LRUCache\",\"put\",\"put\",\"get\",\"put\",\"get\",\"put\",\"get\",\"get\",\"get\"] | [[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]]",
+          "output": "[null,null,null,1,null,-1,null,-1,3,4]"
+        }
+      ],
+      "createdAt": "2024-07-12T00:00:00.000Z",
+      "updatedAt": "2024-07-12T00:00:00.000Z"
     }
   ]
 }

@@ -64,14 +64,16 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser, starterCode
     if (isOpen && availableCollaborators.length === 0) {
       apiClient.getUsers()
         .then((users: Collaborator[]) => {
-          setAvailableCollaborators(users);
+          // Exclude the current user from the list of available collaborators
+          const filtered = currentUser ? users.filter(u => u.id !== currentUser.id) : users;
+          setAvailableCollaborators(filtered);
         })
         .catch((err) => {
           console.error('Failed to load collaborators:', err);
           setAvailableCollaborators([]);
         });
     }
-  }, [isOpen]);
+  }, [isOpen, currentUser]);
 
   useEffect(() => {
     if (isOpen && currentUser) {

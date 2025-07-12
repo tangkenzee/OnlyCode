@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import type { HelpRequest } from "@/lib/api-simple";
 
 const SAMPLE_REQUESTS = [
   {
-    id: 1,
+    id: "req1",
     problemTitle: "Two Sum",
     difficulty: "Easy",
     requesterName: "Alex Johnson",
@@ -22,7 +21,7 @@ const SAMPLE_REQUESTS = [
     urgent: false
   },
   {
-    id: 2,
+    id: "req2",
     problemTitle: "Longest Palindromic Substring",
     difficulty: "Medium",
     requesterName: "Emma Davis",
@@ -33,7 +32,7 @@ const SAMPLE_REQUESTS = [
     urgent: true
   },
   {
-    id: 3,
+    id: "req3",
     problemTitle: "Binary Tree Level Order Traversal",
     difficulty: "Medium",
     requesterName: "Mike Wilson",
@@ -65,7 +64,17 @@ const HelpRequests = () => {
         title: "Help request accepted!",
         description: "You're now connected with the person who needs help."
       });
-      navigate(`/help-session/${session.id}`);
+      
+      // Navigate to the help session page instead of collaborative session
+      // This should be a different page specifically for 1-on-1 help sessions
+      // where you guide someone who is stuck, rather than collaborative coding
+      navigate(`/help-session/${session.id}`, {
+        state: {
+          requestId,
+          isHelper: true,
+          sessionType: 'help'
+        }
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -102,7 +111,6 @@ const HelpRequests = () => {
       setLoading(false);
     }
   };
-
 
   // Reload help requests when filter changes and requests have already been loaded
   useEffect(() => {
@@ -295,6 +303,88 @@ const HelpRequests = () => {
             </Card>
           ))
           ) : null}
+
+          {/* Show sample requests if we haven't fetched real data */}
+          {!fetchRequests && (
+            <div className="space-y-4">
+              {SAMPLE_REQUESTS.filter(req => filter === "All" || req.difficulty === filter).map((request) => (
+                <Card key={request.id} className={`hover:shadow-md transition-shadow ${
+                  request.urgent ? 'border-red-200 bg-red-50' : ''
+                }`}>
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="text-lg font-semibold text-foreground">
+                          {request.problemTitle}
+                        </h4>
+                        <Badge className={getDifficultyColor(request.difficulty)}>
+                          {request.difficulty}
+                        </Badge>
+                        {request.urgent && (
+                          <Badge variant="destructive" className="text-xs">
+                            Urgent
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center gap-4 mb-3 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <User className="h-4 w-4" />
+                          {request.requesterName}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-4 w-4" />
+                          Stuck for {request.timeStuck}
+                        </div>
+                        <div>
+                          {request.attempts} attempts
+                        </div>
+                      </div>
+
+                      <p className="text-muted-foreground mb-3 text-sm">
+                        "{request.message}"
+                      </p>
+
+                      <div className="flex gap-2">
+                        {request.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="ml-6 flex flex-col gap-2">
+                      <Button 
+                        onClick={() => {
+                          // For demo purposes, navigate directly to the help request page
+                          // This simulates accepting a help request
+                          navigate(`/help-request/1`, {
+                            state: {
+                              requestId: request.id,
+                              isHelper: true,
+                              sessionType: 'help',
+                              requesterName: request.requesterName,
+                              problemTitle: request.problemTitle
+                            }
+                          });
+                        }}
+                        disabled={acceptingRequest}
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        {acceptingRequest ? "Accepting..." : "Help"}
+                      </Button>
+                      <div className="text-xs text-center text-muted-foreground">
+                        +{request.difficulty === 'Easy' ? '10' : request.difficulty === 'Medium' ? '20' : '30'} XP
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            </div>
+          )}
         </div>
 
         {/* Helper Tips */}
