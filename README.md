@@ -1,174 +1,188 @@
 # Buddy Code Mentor
 
-## Project Overview
-A modern React + TypeScript app with custom UI components, Tailwind CSS, and Vite. This project helps users request and solve coding problems collaboratively with peer-to-peer assistance.
-
----
+A collaborative coding platform that connects learners with peers for real-time problem-solving sessions.
 
 ## Features
 
-- **Problem Solving**: Interactive code editor with real-time execution
-- **Peer Collaboration**: Find partners with similar skill levels to solve problems together
-- **Help Requests**: Request help from experienced users when stuck
-- **Live Chat**: Real-time communication during help sessions
-- **Leaderboard**: Track user progress and rankings
-- **User Profiles**: Detailed user statistics and achievements
-- **Auto-Help System**: Automatic help suggestions after 3 failed attempts
+- **Real-time Collaboration**: Work with peers on coding problems
+- **Skill-based Matchmaking**: Find partners based on specific skills needed
+- **Help Requests**: Request assistance when stuck on problems
+- **Code Execution**: Run code with Judge0 CE API integration
+- **Leaderboard**: Track progress and achievements
+- **Modern UI**: Built with React, TypeScript, and Tailwind CSS
 
----
+## Tech Stack
+
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui
+- **Backend**: Node.js, Express
+- **Database**: JSON file (db.json)
+- **Code Execution**: Judge0 CE API via RapidAPI
+- **Real-time**: WebSocket support (planned)
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18+ recommended)
-- npm (v9+ recommended)
 
-### Install Dependencies
-```bash
-npm install
-```
+- Node.js 18+ 
+- npm or yarn
 
-### Start Development Server
-```bash
-npm run dev
-```
+### Installation
 
-### Start Backend Server
-```bash
-./start-backend.sh
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/buddy-code-mentor.git
+   cd buddy-code-mentor
+   ```
 
-### Build for Production
-```bash
-npm run build
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
----
+3. **Set up Judge0 CE API (Required for code execution)**
+   
+   The code editor uses Judge0 CE API for code execution. You need to:
+   
+   a. Sign up for a free account at [RapidAPI](https://rapidapi.com/judge0-official/api/judge0-ce/)
+   b. Subscribe to the Judge0 CE API (free tier available)
+   c. Get your API key from the RapidAPI dashboard
+   d. Create a `.env` file in the root directory:
+   ```bash
+   # Judge0 CE API Configuration
+   JUDGE0_API_KEY=your-rapidapi-key-here
+   
+   # Backend Configuration
+   PORT=3001
+   NODE_ENV=development
+   ```
 
-## Project Structure
+4. **Start the development server**
+   ```bash
+   # Start backend
+   npm run server:dev
+   
+   # In another terminal, start frontend
+   npm run dev
+   ```
 
-```
-├── src/
-│   ├── components/          # Reusable UI components
-│   ├── pages/              # Page components
-│   ├── hooks/              # Custom React hooks
-│   └── lib/                # Utility libraries
-├── backend/                # Express.js backend
-├── db.json                 # External database file
-├── server.js               # Main backend server
-└── start-backend.sh        # Backend startup script
-```
+5. **Open your browser**
+   Navigate to `http://localhost:5173`
 
----
+## API Endpoints
 
-## Backend Integration
-
-This project includes a simple Express.js backend for data persistence and API functionality.
-
-### Backend Setup
-```bash
-# Use the start script (recommended)
-./start-backend.sh
-
-# Or manual setup
-cd backend
-npm install
-npm run dev
-```
-
-The backend provides:
-- RESTful API for help requests, user management, and leaderboard
-- External JSON database (`db.json`) for data persistence
-- CORS enabled for frontend integration
-- Health check endpoint for monitoring
-
-### API Endpoints
-- `GET /api/health` - Server health status
-- `GET /api/user/me` - Get current user profile
-- `GET /api/help-requests` - List help requests (with filters)
+### Core Endpoints
+- `GET /api/health` - Health check
+- `GET /api/user/me` - Get current user info
+- `GET /api/help-requests` - List help requests
 - `POST /api/help-requests/:id/accept` - Accept help request
-- `GET /api/leaderboard` - Get user rankings
+- `GET /api/leaderboard` - Get leaderboard
+- `GET /api/stats/global` - Get global stats
 
-### Database
-The project uses an external `db.json` file for data storage:
-- **Users**: User profiles and statistics
-- **Help Requests**: Open requests for assistance
-- **Leaderboard**: User rankings and XP
+### Matchmaking
+- `GET /api/matchmaking/skills?skills=Array,Hash%20Table&limit=5` - Skill-based matchmaking
 
-To modify data, edit `db.json` and restart the backend server.
-
----
-
-## Key Features
-
-### Problem Solver
-- Interactive code editor with syntax highlighting
-- Real-time code execution and testing
-- Problem descriptions with examples and constraints
-- Auto-help system after 3 failed attempts
-
-### Collaborative Solving
-- Find partners with similar skill levels
-- Real-time chat during problem solving
-- Progress tracking and shared achievements
-
-### Help Requests
-- Manual fetch button to load open requests
-- Filter by difficulty level
-- Accept requests to start help sessions
-- Real-time chat with requesters
-
-### User Experience
-- Modern, responsive UI with Tailwind CSS
-- Toast notifications for user feedback
-- Loading states and error handling
-- Mobile-friendly design
-
----
-
-## Code Quality
-
-- **Lint:**
-  ```bash
-  npm run lint
-  ```
-- **Format:**
-  ```bash
-  npm run format
+### Code Execution
+- `POST /api/execute-code` - Execute code using Judge0 CE API
+  ```json
+  {
+    "code": "function twoSum(nums, target) { ... }",
+    "language": "javascript",
+    "testCases": [
+      {
+        "input": "[[2,7,11,15], 9]",
+        "expected": "[0,1]"
+      }
+    ]
+  }
   ```
 
----
+## Supported Programming Languages
+
+The code editor supports multiple languages via Judge0 CE API:
+
+- JavaScript (Node.js)
+- Python 3
+- Java
+- C++
+- C
+- C#
+- PHP
+- Ruby
+- Swift
+- Go
+- Rust
+- Kotlin
+- TypeScript
+- And many more...
+
+## Data Models
+
+### User
+```typescript
+interface User {
+  id: string;
+  name: string;
+  avatar: string;
+  email: string;
+  joinDate: string;
+  currentXP: number;
+  nextLevelXP: number;
+  rank: number;
+  totalHelped: number;
+  overallRating: number;
+  skillRatings: Record<string, number>;
+  badges: Badge[];
+  stats: UserStats;
+}
+```
+
+### Help Request
+```typescript
+interface HelpRequest {
+  id: string;
+  problemTitle: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  requesterId: string;
+  requesterName: string;
+  timeStuck: string;
+  attempts: number;
+  message: string;
+  status: 'open' | 'matched' | 'closed';
+  createdAt: string;
+}
+```
 
 ## Troubleshooting
 
-### API Connection Issues
-1. Make sure the backend server is running on `http://localhost:3001`
-2. Check the API Status component on the homepage
-3. Verify `db.json` exists and is properly formatted
-4. Restart the backend server if needed
+### Code Execution Issues
+- Ensure your Judge0 API key is correctly set in `.env`
+- Check that you have an active RapidAPI subscription
+- Verify the API key has proper permissions
 
-### Common Issues
-- **Port conflicts**: Ensure port 3001 is available
-- **Node.js version**: Requires Node.js v16 or higher
-- **Dependencies**: Run `npm install` if you get module errors
-- **Database**: Check `db.json` format if data isn't loading
+### Backend Connection Issues
+- Make sure the backend is running on port 3001
+- Check that no other process is using the port
+- Verify CORS settings if accessing from different domains
 
----
+### Frontend Issues
+- Clear browser cache if UI doesn't update
+- Check browser console for JavaScript errors
+- Ensure all dependencies are installed
 
-## Development
+## Contributing
 
-### Adding New Features
-1. Update `db.json` for new data structures
-2. Add API endpoints in `server.js`
-3. Create corresponding frontend components
-4. Update TypeScript types as needed
-
-### Data Management
-- Edit `db.json` to modify sample data
-- Restart backend server after database changes
-- Use browser dev tools to inspect API responses
-
----
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
-MIT
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [Judge0 CE](https://judge0.com/) for code execution API
+- [shadcn/ui](https://ui.shadcn.com/) for UI components
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) for code editing

@@ -2,9 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Judge0 CE API Configuration
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY || 'your-rapidapi-key-here';
+const JUDGE0_BASE_URL = 'https://judge0-ce.p.rapidapi.com';
 
 // Middleware
 app.use(cors());
@@ -155,6 +160,146 @@ app.get('/api/stats/global', (req, res) => {
     activeSessions: 0,
     problemsSolved: Object.values(users).reduce((sum, user) => sum + user.stats.problemsSolved, 0)
   });
+});
+
+// Code execution endpoint using Judge0 CE API
+app.post('/api/execute-code', async (req, res) => {
+  const { code, language = 'javascript', testCases = [] } = req.body;
+  
+  if (!code) {
+    return res.status(400).json({ error: 'Code is required' });
+  }
+
+  try {
+    // Language ID mapping for Judge0
+    const languageMap = {
+      'javascript': 63, // Node.js
+      'python': 71,    // Python 3
+      'java': 62,      // Java
+      'cpp': 54,       // C++17
+      'c': 50,         // C
+      'csharp': 51,    // C#
+      'php': 68,       // PHP
+      'ruby': 72,      // Ruby
+      'swift': 83,     // Swift
+      'go': 60,        // Go
+      'rust': 73,      // Rust
+      'kotlin': 78,    // Kotlin
+      'scala': 81,     // Scala
+      'r': 80,         // R
+      'dart': 69,      // Dart
+      'elixir': 57,    // Elixir
+      'erlang': 58,    // Erlang
+      'clojure': 86,   // Clojure
+      'fsharp': 87,    // F#
+      'fortran': 54,   // Fortran
+      'assembly': 45,  // Assembly
+      'bash': 46,      // Bash
+      'basic': 47,     // Basic
+      'cobol': 49,     // COBOL
+      'lisp': 64,      // Common Lisp
+      'lua': 70,       // Lua
+      'nim': 88,       // Nim
+      'objectivec': 79, // Objective-C
+      'ocaml': 81,     // OCaml
+      'pascal': 67,    // Pascal
+      'perl': 85,      // Perl
+      'prolog': 66,    // Prolog
+      'sql': 82,       // SQL
+      'typescript': 74, // TypeScript
+      'vb': 84,        // Visual Basic
+    };
+
+    const languageId = languageMap[language.toLowerCase()] || 63; // Default to JavaScript
+
+    // Submit code for compilation
+    const submitResponse = await axios.post(`${JUDGE0_BASE_URL}/submissions`, {
+      source_code: code,
+      language_id: languageId,
+      stdin: testCases.length > 0 ? testCases[0].input : '',
+      expected_output: testCases.length > 0 ? testCases[0].expected : '',
+      cpu_time_limit: 5,
+      memory_limit: 512000,
+      enable_network: false
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Key': JUDGE0_API_KEY,
+        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+      }
+    });
+
+    const submissionToken = submitResponse.data.token;
+
+    // Poll for results
+    let result;
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    while (attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+
+      const statusResponse = await axios.get(`${JUDGE0_BASE_URL}/submissions/${submissionToken}`, {
+        headers: {
+          'X-RapidAPI-Key': JUDGE0_API_KEY,
+          'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+        }
+      });
+
+      result = statusResponse.data;
+      
+      if (result.status.id > 2) { // Status > 2 means processing is complete
+        break;
+      }
+      
+      attempts++;
+    }
+
+    // Process the result
+    const statusMessages = {
+      1: 'In Queue',
+      2: 'Processing',
+      3: 'Accepted',
+      4: 'Wrong Answer',
+      5: 'Time Limit Exceeded',
+      6: 'Compilation Error',
+      7: 'Runtime Error (SIGSEGV)',
+      8: 'Runtime Error (SIGXFSZ)',
+      9: 'Runtime Error (SIGFPE)',
+      10: 'Runtime Error (SIGABRT)',
+      11: 'Runtime Error (NZEC)',
+      12: 'Runtime Error (Other)',
+      13: 'Internal Error',
+      14: 'Exec Format Error'
+    };
+
+    const response = {
+      success: result.status.id === 3,
+      status: statusMessages[result.status.id] || 'Unknown Status',
+      output: result.stdout || '',
+      error: result.stderr || '',
+      compileOutput: result.compile_output || '',
+      time: result.time || 0,
+      memory: result.memory || 0,
+      language: language,
+      testCases: testCases.map((testCase, index) => ({
+        input: testCase.input,
+        expected: testCase.expected,
+        actual: index === 0 ? result.stdout : 'Not executed',
+        passed: index === 0 ? (result.status.id === 3 && result.stdout?.trim() === testCase.expected?.toString()) : false
+      }))
+    };
+
+    res.json(response);
+
+  } catch (error) {
+    console.error('Code execution error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Code execution failed',
+      details: error.message
+    });
+  }
 });
 
 // Serve static files in production

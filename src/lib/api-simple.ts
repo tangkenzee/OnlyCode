@@ -52,8 +52,34 @@ export interface LeaderboardEntry {
   name: string;
   avatar: string;
   xp: number;
-  totalHelped: number;
-  rating: number;
+  problemsSolved: number;
+  helpGiven: number;
+}
+
+export interface CodeExecutionResult {
+  success: boolean;
+  status: string;
+  output: string;
+  error: string;
+  compileOutput: string;
+  time: number;
+  memory: number;
+  language: string;
+  testCases: Array<{
+    input: string;
+    expected: string;
+    actual: string;
+    passed: boolean;
+  }>;
+}
+
+export interface CodeExecutionRequest {
+  code: string;
+  language?: string;
+  testCases?: Array<{
+    input: string;
+    expected: string;
+  }>;
 }
 
 class SimpleApiClient {
@@ -139,6 +165,22 @@ class SimpleApiClient {
   async healthCheck(): Promise<{ status: string; timestamp: string }> {
     return this.request<{ status: string; timestamp: string }>('/health');
   }
+
+  async executeCode(request: CodeExecutionRequest): Promise<CodeExecutionResult> {
+    const response = await fetch(`${API_BASE_URL}/execute-code`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Code execution failed: ${response.statusText}`);
+    }
+
+    return response.json();
+  },
 }
 
 export const apiClient = new SimpleApiClient();
