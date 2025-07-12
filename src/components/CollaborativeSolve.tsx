@@ -208,54 +208,56 @@ const CollaborativeSolve = ({ isOpen, onClose, problem, currentUser }: Collabora
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3 max-h-72 overflow-y-auto">
-                  {availableCollaborators.map((collaborator) => {
-                    const isSelected = selectedCollaborators.includes(collaborator.id);
-                    const skillMatch = getSkillMatch(collaborator);
-                    
-                    return (
-                      <Card 
-                        key={collaborator.id} 
-                        className={`cursor-pointer transition-all ${
-                          isSelected ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
-                        }`}
-                        onClick={() => toggleCollaborator(collaborator.id)}
-                      >
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-10 w-10">
-                                <AvatarFallback>{collaborator.avatar}</AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <h4 className="font-semibold">{collaborator.name}</h4>
-                                  <div className="flex items-center gap-1">
-                                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                    <span className="text-sm">{collaborator.rating}</span>
+                  {availableCollaborators
+                    .sort((a, b) => getSkillMatch(b) - getSkillMatch(a))
+                    .map((collaborator) => {
+                      const isSelected = selectedCollaborators.includes(collaborator.id);
+                      const skillMatch = getSkillMatch(collaborator);
+                      
+                      return (
+                        <Card 
+                          key={collaborator.id} 
+                          className={`cursor-pointer transition-all ${
+                            isSelected ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
+                          }`}
+                          onClick={() => toggleCollaborator(collaborator.id)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <Avatar className="h-10 w-10">
+                                  <AvatarFallback>{collaborator.avatar}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <h4 className="font-semibold">{collaborator.name}</h4>
+                                    <div className="flex items-center gap-1">
+                                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                      <span className="text-sm">{collaborator.rating}</span>
+                                    </div>
+                                    <div className={`w-2 h-2 rounded-full ${collaborator.isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
                                   </div>
-                                  <div className={`w-2 h-2 rounded-full ${collaborator.isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                  {collaborator.xp} XP • {skillMatch.toFixed(0)}% skill match
+                                  <div className="text-sm text-muted-foreground">
+                                    {collaborator.xp} XP • {skillMatch.toFixed(0)}% skill match
+                                  </div>
                                 </div>
                               </div>
+                              {isSelected && (
+                                <CheckCircle className="h-5 w-5 text-primary" />
+                              )}
                             </div>
-                            {isSelected && (
-                              <CheckCircle className="h-5 w-5 text-primary" />
-                            )}
-                          </div>
-                          
-                          <div className="mt-3 flex gap-1">
-                            {problem.tags.map(tag => (
-                              <Badge key={tag} variant="secondary" className="text-xs">
-                                {tag} Level: {collaborator.tagSkillLevels?.[tag] ?? 0}
-                              </Badge>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                            
+                            <div className="mt-3 flex gap-1">
+                              {problem.tags.map(tag => (
+                                <Badge key={tag} variant="secondary" className="text-xs">
+                                  {tag} Level: {collaborator.tagSkillLevels?.[tag] ?? 0}
+                                </Badge>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                 </CardContent>
               </Card>
             </div>
