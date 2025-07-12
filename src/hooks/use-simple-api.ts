@@ -82,4 +82,34 @@ export function useAcceptHelpRequest() {
   }, []);
 
   return { acceptRequest, loading, error };
+}
+
+export function useCreateHelpRequest() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const createRequest = useCallback(async (data: {
+    problemTitle: string;
+    difficulty: string;
+    message: string;
+    tags: string[];
+    code?: string;
+    attempts: number;
+    timeStuck: string;
+  }) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const result = await apiClient.createHelpRequest(data);
+      setLoading(false);
+      return result;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create help request');
+      setLoading(false);
+      throw err;
+    }
+  }, []);
+
+  return { createRequest, loading, error };
 } 

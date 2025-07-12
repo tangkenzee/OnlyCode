@@ -6,12 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, Play, RotateCcw, HelpCircle, Clock, AlertTriangle, Users, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import CollaborativeSolve from "@/components/CollaborativeSolve";
 import type { Problem } from "@/lib/types";
 import { api } from "@/lib/api-simple";
 import type { CodeExecutionResult } from "@/lib/api-simple";
+import { useCreateHelpRequest, useCurrentUser } from "@/hooks/use-simple-api";
 import Editor from "@monaco-editor/react";
 
 const SAMPLE_PROBLEM: Problem & { examples: Array<{ input: string; output: string; explanation: string }> } = {
@@ -68,16 +70,25 @@ console.log(twoSum([3, 3], 6)); // Should output [0, 1]`);
   const [attempts, setAttempts] = useState(0);
   const [canRequestHelp, setCanRequestHelp] = useState(false);
   const [isCollaborativeOpen, setIsCollaborativeOpen] = useState(false);
+  const [isHelpRequestOpen, setIsHelpRequestOpen] = useState(false);
+  const [helpMessage, setHelpMessage] = useState("");
   const [executionResult, setExecutionResult] = useState<CodeExecutionResult | null>(null);
 
-  // Mock current user data
-  const currentUser = {
-    id: "current-user",
-    name: "You",
-    avatar: "U",
-    rating: 4.5,
-    xp: 1200
-  };
+  // Get current user data
+  const { data: currentUser } = useCurrentUser();
+  const { createRequest, loading: creatingRequest } = useCreateHelpRequest();
+
+  // Create a collaborator object from current user for the collaborative component
+  const collaboratorUser = currentUser ? {
+    id: currentUser.id,
+    name: currentUser.name,
+    avatar: currentUser.avatar,
+    rating: currentUser.rating,
+    xp: currentUser.currentXP,
+    isOnline: true,
+    lastSeen: new Date(),
+    skills: SAMPLE_PROBLEM.tags
+  } : null;
 
   // Timer logic
   useEffect(() => {
@@ -199,7 +210,47 @@ console.log(twoSum([3, 3], 6)); // Should output [0, 1]`);
   };
 
   const requestHelp = () => {
-    navigate(`/help-request/${id}`, { state: { code, attempts, timeElapsed } });
+    setIsHelpRequestOpen(true);
+  };
+
+  const submitHelpRequest = async () => {
+    if (!helpMessage.trim() || !currentUser) {
+      toast({
+        title: "Error",
+        description: "Please enter a help message.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      await createRequest({
+        problemTitle: SAMPLE_PROBLEM.title,
+        difficulty: SAMPLE_PROBLEM.difficulty,
+        message: helpMessage,
+        tags: SAMPLE_PROBLEM.tags,
+        code: code,
+        attempts: attempts,
+        timeStuck: `${Math.floor(timeElapsed / 60)} minutes`
+      });
+
+      toast({
+        title: "Help request created!",
+        description: "Your request has been posted and helpers will be notified."
+      });
+
+      setIsHelpRequestOpen(false);
+      setHelpMessage("");
+      
+      // Navigate to help requests page to see the request
+      navigate('/help-requests');
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create help request. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -357,9 +408,53 @@ console.log(twoSum([3, 3], 6)); // Should output [0, 1]`);
         isOpen={isCollaborativeOpen}
         onClose={() => setIsCollaborativeOpen(false)}
         problem={SAMPLE_PROBLEM}
-        currentUser={currentUser}
+        currentUser={collaboratorUser}
         starterCode={code}
       />
+
+      {/* Help Request Dialog */}
+      <Dialog open={isHelpRequestOpen} onOpenChange={setIsHelpRequestOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Request Help with {SAMPLE_PROBLEM.title}</DialogTitle>
+            <DialogDescription>
+              Describe what you're stuck on and what you've tried so far. This will help others understand how to best assist you.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Help Message</label>
+              <Textarea
+                value={helpMessage}
+                onChange={(e) => setHelpMessage(e.target.value)}
+                placeholder="Describe what you're stuck on, what you've tried, and any specific questions you have..."
+                className="mt-1"
+                rows={4}
+              />
+            </div>
+            
+            <div className="text-sm text-muted-foreground space-y-2">
+              <div><strong>Problem:</strong> {SAMPLE_PROBLEM.title}</div>
+              <div><strong>Difficulty:</strong> {SAMPLE_PROBLEM.difficulty}</div>
+              <div><strong>Time spent:</strong> {formatTime(timeElapsed)}</div>
+              <div><strong>Attempts:</strong> {attempts}</div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsHelpRequestOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={submitHelpRequest} 
+              disabled={!helpMessage.trim() || creatingRequest}
+            >
+              {creatingRequest ? "Creating..." : "Submit Help Request"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
