@@ -81,24 +81,7 @@ const Index = () => {
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Solve coding problems, get help from peers, and help others while earning points and building your reputation.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={() => navigate('/pair-programming')}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              <Users className="h-5 w-5 mr-2" />
-              Try Pair Programming Demo
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={() => navigate('/help-requests')}
-            >
-              <MessageCircle className="h-5 w-5 mr-2" />
-              Get Help
-            </Button>
-          </div>
+
         </div>
 
         {/* Stats Cards */}

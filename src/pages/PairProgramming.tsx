@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,8 +13,17 @@ interface User {
   name: string;
 }
 
+interface Problem {
+  id: string;
+  title: string;
+  difficulty: string;
+  description: string;
+  tags: string[];
+}
+
 const PairProgramming = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [users, setUsers] = useState<User[]>([]);
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
@@ -22,6 +31,9 @@ const PairProgramming = () => {
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [currentUser, setCurrentUser] = useState<User>({ id: `user-${Date.now()}`, name: `User ${Math.floor(Math.random() * 1000)}` });
+  
+  // Get state from collaboration flow
+  const { problem, collaborators, starterCode } = location.state || {};
 
   // Connect to WebSocket
   useEffect(() => {
@@ -161,9 +173,29 @@ const PairProgramming = () => {
     }
   };
 
+  // Initialize code with starter code from collaboration or default
+  useEffect(() => {
+    if (starterCode) {
+      setCode(starterCode);
+      handleCodeChange(starterCode);
+    } else {
+      // Default code for demo
+      const defaultCode = `function twoSum(nums, target) {
+  // Your code here
+  
+}
+
+// Test the function
+console.log(twoSum([2, 7, 11, 15], 9)); // Should output [0, 1]
+console.log(twoSum([3, 2, 4], 6)); // Should output [1, 2]
+console.log(twoSum([3, 3], 6)); // Should output [0, 1]`;
+      setCode(defaultCode);
+    }
+  }, [starterCode]);
+
   // Reset code to initial state
   const resetCode = () => {
-    const initialCode = `function twoSum(nums, target) {
+    const initialCode = starterCode || `function twoSum(nums, target) {
   // Your code here
   
 }
@@ -188,7 +220,9 @@ console.log(twoSum([3, 3], 6)); // Should output [0, 1]`;
                 Back to Problems
               </Button>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl font-semibold text-foreground">Pair Programming Demo</h1>
+                <h1 className="text-xl font-semibold text-foreground">
+                  {problem ? `${problem.title} - Pair Programming` : "Pair Programming Demo"}
+                </h1>
                 <Badge variant={isConnected ? "default" : "destructive"}>
                   {isConnected ? "Connected" : "Disconnected"}
                 </Badge>
@@ -210,19 +244,27 @@ console.log(twoSum([3, 3], 6)); // Should output [0, 1]`;
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Two Sum Problem</CardTitle>
+                <CardTitle>{problem ? problem.title : "Two Sum Problem"}</CardTitle>
                 <div className="flex gap-2">
-                  <Badge variant="secondary" className="text-xs">Array</Badge>
-                  <Badge variant="secondary" className="text-xs">Hash Table</Badge>
+                  {problem ? (
+                    problem.tags.map(tag => (
+                      <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                    ))
+                  ) : (
+                    <>
+                      <Badge variant="secondary" className="text-xs">Array</Badge>
+                      <Badge variant="secondary" className="text-xs">Hash Table</Badge>
+                    </>
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="whitespace-pre-wrap text-sm text-foreground mb-4">
-                  Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+                  {problem ? problem.description : `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 
 You may assume that each input would have exactly one solution, and you may not use the same element twice.
 
-You can return the answer in any order.
+You can return the answer in any order.`}
                 </div>
                 <div className="space-y-4">
                   <h4 className="font-semibold text-foreground">Examples:</h4>
@@ -243,6 +285,30 @@ You can return the answer in any order.
                 </div>
               </CardContent>
             </Card>
+
+            {/* Collaborators (from collaboration flow) */}
+            {collaborators && collaborators.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Your Collaborators</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {collaborators.map((collaborator: any) => (
+                      <div key={collaborator.id} className="flex items-center gap-2">
+                        <Avatar className="h-6 w-6">
+                          <AvatarFallback className="text-xs">
+                            {collaborator.name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm">{collaborator.name}</span>
+                        <Badge variant="secondary" className="text-xs">{collaborator.xp} XP</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Online Users */}
             <Card>
