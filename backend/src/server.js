@@ -36,48 +36,182 @@ const helpRequests = db.helpRequests;
 const leaderboard = db.leaderboard;
 const problems = db.problems || [];
 
-// WebSocket server for real-time chat
+// WebSocket server for real-time chat and pair programming
 const wss = new WebSocketServer({port: 3002});
 const sessions = new Map();  // sessionId -> Set of WebSocket connections
 
-wss.on('connection', (ws, req) => {
-  const sessionId = req.url.split('/').pop();
+// Global pair programming room state
+const globalPairProgrammingRoom = {
+  id: 'global-pair-programming',
+  users: new Set(), // Set of user objects
+  code: `function twoSum(nums, target) {
+  // Your code here
+  
+}
 
-  if (!sessions.has(sessionId)) {
-    sessions.set(sessionId, new Set());
+// Test the function
+console.log(twoSum([2, 7, 11, 15], 9)); // Should output [0, 1]
+console.log(twoSum([3, 2, 4], 6)); // Should output [1, 2]
+console.log(twoSum([3, 3], 6)); // Should output [0, 1]`,
+  problem: {
+    id: 'two-sum',
+    title: 'Two Sum',
+    difficulty: 'Easy',
+    description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.`,
+    tags: ['Array', 'Hash Table'],
+    examples: [
+      {
+        input: 'nums = [2,7,11,15], target = 9',
+        output: '[0,1]',
+        explanation: 'Because nums[0] + nums[1] == 9, we return [0, 1].'
+      },
+      {
+        input: 'nums = [3,2,4], target = 6',
+        output: '[1,2]',
+        explanation: 'Because nums[1] + nums[2] == 6, we return [1, 2].'
+      }
+    ]
   }
-  sessions.get(sessionId).add(ws);
+};
 
-  ws.on('message', (data) => {
-    try {
-      const message = JSON.parse(data);
-      const chatMessage = {
-        id: uuidv4(),
-        sessionId,
-        senderId: message.senderId || 'anonymous',
-        senderName: message.senderName || 'Anonymous',
-        message: message.message,
-        timestamp: new Date().toISOString(),
-        type: 'text'
-      };
+wss.on('connection', (ws, req) => {
+  const url = new URL(req.url, 'http://localhost');
+  const sessionId = url.pathname.split('/').pop();
+  const isPairProgramming = url.searchParams.get('type') === 'pair-programming';
 
-      // Broadcast to all connections in this session
-      sessions.get(sessionId).forEach((client) => {
-        if (client.readyState === 1) {  // WebSocket.OPEN
-          client.send(JSON.stringify(chatMessage));
+  if (isPairProgramming) {
+    // Handle pair programming room
+    const userId = url.searchParams.get('userId') || 'anonymous';
+    const userName = url.searchParams.get('userName') || 'Anonymous';
+    
+    // Add user to global room
+    const user = { id: userId, name: userName, ws };
+    globalPairProgrammingRoom.users.add(user);
+    
+    // Send current room state to new user
+    ws.send(JSON.stringify({
+      type: 'room-joined',
+      users: Array.from(globalPairProgrammingRoom.users).map(u => ({ id: u.id, name: u.name })),
+      code: globalPairProgrammingRoom.code,
+      problem: globalPairProgrammingRoom.problem
+    }));
+
+    // Notify other users about new participant
+    globalPairProgrammingRoom.users.forEach(client => {
+      if (client.ws !== ws && client.ws.readyState === 1) {
+        client.ws.send(JSON.stringify({
+          type: 'user-joined',
+          user: { id: userId, name: userName }
+        }));
+      }
+    });
+
+    ws.on('message', (data) => {
+      try {
+        const message = JSON.parse(data);
+        
+        if (message.type === 'code-change') {
+          // Update global code
+          globalPairProgrammingRoom.code = message.code;
+          
+          // Broadcast code change to all users
+          globalPairProgrammingRoom.users.forEach(client => {
+            if (client.ws !== ws && client.ws.readyState === 1) {
+              client.ws.send(JSON.stringify({
+                type: 'code-updated',
+                code: message.code,
+                userId: userId,
+                userName: userName
+              }));
+            }
+          });
+        } else if (message.type === 'chat-message') {
+          // Handle chat messages
+          const chatMessage = {
+            id: uuidv4(),
+            senderId: userId,
+            senderName: userName,
+            message: message.message,
+            timestamp: new Date().toISOString(),
+            type: 'text'
+          };
+
+          // Broadcast chat message to all users
+          globalPairProgrammingRoom.users.forEach(client => {
+            if (client.ws.readyState === 1) {
+              client.ws.send(JSON.stringify({
+                type: 'chat-message',
+                ...chatMessage
+              }));
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error processing pair programming message:', error);
+      }
+    });
+
+    ws.on('close', () => {
+      // Remove user from global room
+      globalPairProgrammingRoom.users.forEach(client => {
+        if (client.ws === ws) {
+          globalPairProgrammingRoom.users.delete(client);
         }
       });
-    } catch (error) {
-      console.error('Error processing WebSocket message:', error);
-    }
-  });
 
-  ws.on('close', () => {
-    sessions.get(sessionId)?.delete(ws);
-    if (sessions.get(sessionId)?.size === 0) {
-      sessions.delete(sessionId);
+      // Notify other users about departure
+      globalPairProgrammingRoom.users.forEach(client => {
+        if (client.ws.readyState === 1) {
+          client.ws.send(JSON.stringify({
+            type: 'user-left',
+            userId: userId,
+            userName: userName
+          }));
+        }
+      });
+    });
+  } else {
+    // Handle regular chat sessions (existing logic)
+    if (!sessions.has(sessionId)) {
+      sessions.set(sessionId, new Set());
     }
-  });
+    sessions.get(sessionId).add(ws);
+
+    ws.on('message', (data) => {
+      try {
+        const message = JSON.parse(data);
+        const chatMessage = {
+          id: uuidv4(),
+          sessionId,
+          senderId: message.senderId || 'anonymous',
+          senderName: message.senderName || 'Anonymous',
+          message: message.message,
+          timestamp: new Date().toISOString(),
+          type: 'text'
+        };
+
+        // Broadcast to all connections in this session
+        sessions.get(sessionId).forEach((client) => {
+          if (client.readyState === 1) {  // WebSocket.OPEN
+            client.send(JSON.stringify(chatMessage));
+          }
+        });
+      } catch (error) {
+        console.error('Error processing WebSocket message:', error);
+      }
+    });
+
+    ws.on('close', () => {
+      sessions.get(sessionId)?.delete(ws);
+      if (sessions.get(sessionId)?.size === 0) {
+        sessions.delete(sessionId);
+      }
+    });
+  }
 });
 
 // API Routes

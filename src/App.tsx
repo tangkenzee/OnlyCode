@@ -12,6 +12,7 @@ import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import CollaborativeSession from "./pages/CollaborativeSession";
+import PairProgramming from "./pages/PairProgramming";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/collaborative-solve/:sessionId" element={<CollaborativeSession />} />
+          <Route path="/pair-programming" element={<PairProgramming />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
