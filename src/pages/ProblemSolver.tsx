@@ -55,17 +55,7 @@ const ProblemSolver = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState(`function twoSum(nums, target) {
     // Your code here
-    const map = new Map();
     
-    for (let i = 0; i < nums.length; i++) {
-        const complement = target - nums[i];
-        if (map.has(complement)) {
-            return [map.get(complement), i];
-        }
-        map.set(nums[i], i);
-    }
-    
-    return [];
 }
 
 // Test the function
@@ -193,17 +183,7 @@ console.log(twoSum([3, 3], 6)); // Should output [0, 1]`);
   const resetCode = () => {
     setCode(`function twoSum(nums, target) {
     // Your code here
-    const map = new Map();
-    
-    for (let i = 0; i < nums.length; i++) {
-        const complement = target - nums[i];
-        if (map.has(complement)) {
-            return [map.get(complement), i];
-        }
-        map.set(nums[i], i);
-    }
-    
-    return [];
+
 }
 
 // Test the function
