@@ -65,10 +65,10 @@ const HelpRequests = () => {
         description: "You're now connected with the person who needs help."
       });
       
-      // Navigate to the help session page instead of collaborative session
-      // This should be a different page specifically for 1-on-1 help sessions
-      // where you guide someone who is stuck, rather than collaborative coding
-      navigate(`/help-session/${session.id}`, {
+      // Navigate to the help request page
+      // Extract problem ID from request ID (e.g., "req1" -> "1")
+      const problemId = requestId.replace('req', '');
+      navigate(`/help-request/${problemId}`, {
         state: {
           requestId,
           isHelper: true,
