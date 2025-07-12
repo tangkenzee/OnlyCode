@@ -7,7 +7,7 @@ A collaborative coding platform that connects learners with peers for real-time 
 - **Real-time Collaboration**: Work with peers on coding problems
 - **Skill-based Matchmaking**: Find partners based on specific skills needed
 - **Help Requests**: Request assistance when stuck on problems
-- **Code Execution**: Run code with Judge0 CE API integration
+- **Code Execution**: Run code with Judge0 CE API integration (can be disabled via USE_JUDGE0 in `.env`)
 - **Leaderboard**: Track progress and achievements
 - **Modern UI**: Built with React, TypeScript, and Tailwind CSS
 
@@ -16,8 +16,8 @@ A collaborative coding platform that connects learners with peers for real-time 
 - **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui
 - **Backend**: Node.js, Express
 - **Database**: JSON file (db.json)
-- **Code Execution**: Judge0 CE API via RapidAPI
-- **Real-time**: WebSocket support (planned)
+- **Code Execution**: Judge0 CE API via RapidAPI (configurable)
+- **Real-time**: WebSocket support
 
 ## Getting Started
 
@@ -46,10 +46,11 @@ A collaborative coding platform that connects learners with peers for real-time 
    a. Sign up for a free account at [RapidAPI](https://rapidapi.com/judge0-official/api/judge0-ce/)
    b. Subscribe to the Judge0 CE API (free tier available)
    c. Get your API key from the RapidAPI dashboard
-   d. Create a `.env` file in the root directory:
+   d. Create a `.env` file in the `backend` directory:
    ```bash
    # Judge0 CE API Configuration
    JUDGE0_API_KEY=your-rapidapi-key-here
+   USE_JUDGE0=true # Set to false to disable code execution
    
    # Backend Configuration
    PORT=3001
@@ -82,7 +83,7 @@ A collaborative coding platform that connects learners with peers for real-time 
 - `GET /api/matchmaking/skills?skills=Array,Hash%20Table&limit=5` - Skill-based matchmaking
 
 ### Code Execution
-- `POST /api/execute-code` - Execute code using Judge0 CE API
+- `POST /api/execute-code` - Execute code using Judge0 CE API (if enabled)
   ```json
   {
     "code": "function twoSum(nums, target) { ... }",
@@ -158,6 +159,7 @@ interface HelpRequest {
 - Ensure your Judge0 API key is correctly set in `.env`
 - Check that you have an active RapidAPI subscription
 - Verify the API key has proper permissions
+- If USE_JUDGE0 is set to false, code execution will always return Wrong Answer
 
 ### Backend Connection Issues
 - Make sure the backend is running on port 3001

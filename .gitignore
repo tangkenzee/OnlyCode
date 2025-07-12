@@ -25,3 +25,18 @@ dist-ssr
 
 .env
 backend/.env
+
+db.json
+PAIR_PROGRAMMING_DEMO.md
+PROJECT_CONTEXT.md
+QUICK_CONTEXT.md
+server.cjs
+test-code-execution.js
+test-pair-programming.html
+vite.config.ts.timestamp-1752288283757-ce3fbe9750c1e.mjs
+vite.config.ts.timestamp-1752288288095-1f11d4b6b9ae4.mjs
+vite.config.ts.timestamp-1752288292201-a108ba02ecf56.mjs
+vite.config.ts.timestamp-1752288302348-e1a6da76e43fd.mjs
+vite.config.ts.timestamp-1752288309954-3a0c7a94bc8ff.mjs
+vite.config.ts.timestamp-1752288333421-d816ed5632126.mjs
+vite.config.ts.timestamp-1752288354268-afe0dbf48d8e1.mjs
