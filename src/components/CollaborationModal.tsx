@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -19,16 +19,27 @@ interface CollaborationModalProps {
 const CollaborationModal = ({ isOpen, onClose }: CollaborationModalProps) => {
   const navigate = useNavigate();
   const [isAccepting, setIsAccepting] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetch("/api/users")
+        .then((res) => res.json())
+        .then((users) => {
+          const found = users.find((u: any) => u.name === "Andrew Zeraph");
+          setUser(found);
+        });
+    }
+  }, [isOpen]);
 
   const handleAccept = async () => {
     setIsAccepting(true);
-    
     // Simulate accepting collaboration
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     // Navigate to pair programming
-    navigate('/pair-programming');
-    
+    navigate("/pair-programming");
+
     onClose();
     setIsAccepting(false);
   };
@@ -49,49 +60,52 @@ const CollaborationModal = ({ isOpen, onClose }: CollaborationModalProps) => {
             Someone wants to collaborate with you on a coding problem!
           </DialogDescription>
         </DialogHeader>
-        
         <div className="flex flex-col items-center space-y-4 py-4">
           {/* User Info */}
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12">
               <AvatarFallback className="text-lg font-semibold bg-blue-100 text-blue-700">
-                AT
+                {user ? user.avatar || user.name[0] : "?"}
               </AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-semibold text-foreground">Alex Thompson</div>
-              <div className="text-sm text-muted-foreground">Rank #6 • 4.6★</div>
+              <div className="font-semibold text-foreground">
+                {user ? user.name : "Loading..."}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Rank #{user ? user.rank : "-"} •{" "}
+                {user ? user.rating : "-"}★
+              </div>
             </div>
           </div>
-
           {/* Problem Info */}
           <div className="bg-muted/50 rounded-lg p-4 w-full text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Code className="h-4 w-4 text-green-600" />
-              <span className="font-medium text-foreground">Two Sum Problem</span>
+              <span className="font-medium text-foreground">
+                Two Sum Problem
+              </span>
             </div>
             <div className="text-sm text-muted-foreground">
               Difficulty: Easy • Array, Hash Table
             </div>
           </div>
-
           {/* Timer */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock className="h-4 w-4" />
             <span>This request expires in 30 seconds</span>
           </div>
-
           {/* Action Buttons */}
           <div className="flex gap-3 w-full">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleDecline}
               className="flex-1"
               disabled={isAccepting}
             >
               Decline
             </Button>
-            <Button 
+            <Button
               onClick={handleAccept}
               className="flex-1"
               disabled={isAccepting}
